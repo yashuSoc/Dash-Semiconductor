@@ -80,7 +80,7 @@ const Sidebar = () => {
                 ml="15px"
               >
                 <Typography variant="h3" color={colors.grey[100]}>
-                  ADMINIS
+                  Admin Dashboard
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
@@ -107,10 +107,10 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Ed Roh
+                  Yash
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
-                  VP Fancy Admin
+                  SoCTeamup
                 </Typography>
               </Box>
             </Box>
@@ -133,22 +133,29 @@ const Sidebar = () => {
               Data
             </Typography>
             <Item
-              title="Manage Team"
+              title="Customer"
               to="/team"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Contacts Information"
+              title="IC Design Service"
               to="/contacts"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Invoices Balances"
+              title="Domain Leaders"
               to="/invoices"
+              icon={<ReceiptOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Engineers"
+              to="/engineers"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

@@ -7,37 +7,41 @@ import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "../../components/Header";
 
-const Team = () => {
+const Customer = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const columns = [
     { field: "id", headerName: "ID" },
     {
       field: "name",
-      headerName: "Name",
+      headerName: "Company Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Age",
+      field: "Employees",
+      headerName: "No. of Employee",
       type: "number",
-      headerAlign: "left",
+      headerAlign: "center",
       align: "left",
     },
     {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
+      field: "location",
+      headerName:"Location",
+      headerAlign: "center",
+      type:"text",
     },
     {
       field: "email",
       headerName: "Email",
+      type:"email",
+      headerAlign: "center",
       flex: 1,
     },
     {
       field: "accessLevel",
       headerName: "Access Level",
+      headerAlign: "center",
       flex: 1,
       renderCell: ({ row: { access } }) => {
         return (
@@ -70,7 +74,7 @@ const Team = () => {
 
   return (
     <Box m="20px">
-      <Header title="TEAM" subtitle="Managing the Team Members" />
+      <Header title="Customer" subtitle="Managing the Customers" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -106,4 +110,4 @@ const Team = () => {
   );
 };
 
-export default Team;
+export default Customer;
