@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
@@ -17,10 +17,22 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import Engineers from "./scenes/engineers";
 import { ColorModeContext, useMode } from "./theme";
 import Calendar from "./scenes/calendar/calendar";
-
+import Customerprofile from "./scenes/customerDashboard/customerDashboard";
+import Customerbar from "./scenes/global/Customerbar";
+import Customerform from "./scenes/customerDashboard/customerform";
+import Customerboard from "./scenes/customerDashboard/custboard";
+import Customercalendar from "./scenes/customerDashboard/customerCalender";
+import Engineerboard from "./scenes/engineerDashboard/engineerDashboard";
+import Engineerform from "./scenes/engineerDashboard/engineerForm";
+import Engprofile from "./scenes/engineerDashboard/engProfile";
+import Engprojects from "./scenes/engineerDashboard/engProjects";
+import Engineerbar from "./scenes/global/Engineerbar";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+  const location = useLocation();
+  const isCustomerProfileRoute = location.pathname.startsWith("/customerDashboard");
+  const isEngineerDashboardRoute = location.pathname.startsWith("/engineerDashboard");
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -28,10 +40,19 @@ function App() {
         <CssBaseline />
         
         <div className="app">
-          <Sidebar isSidebar={isSidebar} />
+          {/* Conditionally render the sidebar based on the route */}
+          {isCustomerProfileRoute ? <Customerbar /> : (isEngineerDashboardRoute ? <Engineerbar /> : <Sidebar isSidebar={isSidebar} />)}
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
+              <Route path="/customerDashboard" element={<Customerprofile/>}/>
+              <Route path="/customerDashboard/customerform" element={<Customerform/>}/>
+              <Route path="/customerDashboard/custboard" element={<Customerboard/>}/>
+              <Route path="/customerDashboard/customerCalender" element={<Customercalendar/>}/>
+              <Route path="/engineerDashboard" element={<Engineerboard/>}/>
+              <Route path="/engineerDashboard/engineerForm" element={<Engineerform/>}/>
+              <Route path="/engineerDashboard/engProfile" element={<Engprofile/>}/>
+              <Route path="/engineerDashboard/engProjects" element={<Engprojects/>}/>
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/" element={<Dashboard />} />
               <Route path="/team" element={<Team />} />
