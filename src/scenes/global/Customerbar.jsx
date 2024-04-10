@@ -141,14 +141,14 @@ const Customerbar = () => {
             />
             <Item
               title="Customer Clients"
-              to="/customerDashboard"
+              to="/customerDashboard/Clients"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Customer Project"
-              to="/customerDashboard"
+              to="/customerDashboard/Projects"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

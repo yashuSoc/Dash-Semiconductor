@@ -11,8 +11,16 @@ const Customerprofile = () => {
     { field: "id", headerName: "ID" },
     {
       field: "name",
-      headerName: "Company Name",
+      headerName: "Name",
       type: "text",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "location",
+      headerName:"Location",
+      headerAlign: "left",
+      type:"text",
       flex: 1,
       cellClassName: "name-column--cell",
     },
@@ -23,14 +31,7 @@ const Customerprofile = () => {
       headerAlign: "left",
       align: "left",
     },
-    {
-      field: "location",
-      headerName:"Location",
-      headerAlign: "left",
-      type:"text",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
+    
     {
       field: "Projects",
       headerName: "Projects Delivered",

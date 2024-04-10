@@ -115,7 +115,7 @@ const Icdesignbar = () => {
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Item
               title="Dashboard"
-              to="/customerDashboard/custboard"
+              to="/icDesign/icboard"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

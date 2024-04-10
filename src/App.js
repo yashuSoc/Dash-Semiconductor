@@ -27,12 +27,20 @@ import Engineerform from "./scenes/engineerDashboard/engineerForm";
 import Engprofile from "./scenes/engineerDashboard/engProfile";
 import Engprojects from "./scenes/engineerDashboard/engProjects";
 import Engineerbar from "./scenes/global/Engineerbar";
+import Engineercalendar from "./scenes/engineerDashboard/engineerCalendar";
+import Icdesignbar from "./scenes/global/IcDesignbar";
+import Icboard from "./scenes/icDesign/icboard";
+import Iccalendar from "./scenes/icDesign/icCalendar";
+import Icform from "./scenes/icDesign/icForm";
+import Customerclients from "./scenes/customerDashboard/custClients";
+import Customerprojects from "./scenes/customerDashboard/custprojects";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const location = useLocation();
   const isCustomerProfileRoute = location.pathname.startsWith("/customerDashboard");
   const isEngineerDashboardRoute = location.pathname.startsWith("/engineerDashboard");
+  const isICDesignerDashboardRoute = location.pathname.startsWith("/icDesign");
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -41,18 +49,28 @@ function App() {
         
         <div className="app">
           {/* Conditionally render the sidebar based on the route */}
-          {isCustomerProfileRoute ? <Customerbar /> : (isEngineerDashboardRoute ? <Engineerbar /> : <Sidebar isSidebar={isSidebar} />)}
+          {isCustomerProfileRoute ? <Customerbar /> : 
+            (isEngineerDashboardRoute ? <Engineerbar /> : 
+              (isICDesignerDashboardRoute ? <Icdesignbar /> : <Sidebar isSidebar={isSidebar} />)
+            )
+          }
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
               <Route path="/customerDashboard" element={<Customerprofile/>}/>
+              <Route path="/customerDashboard/Clients" element={<Customerclients/>}/>
+              <Route path="/customerDashboard/Projects" element={<Customerprojects/>}/>
               <Route path="/customerDashboard/customerform" element={<Customerform/>}/>
               <Route path="/customerDashboard/custboard" element={<Customerboard/>}/>
               <Route path="/customerDashboard/customerCalender" element={<Customercalendar/>}/>
               <Route path="/engineerDashboard" element={<Engineerboard/>}/>
-              <Route path="/engineerDashboard/engineerForm" element={<Engineerform/>}/>
-              <Route path="/engineerDashboard/engProfile" element={<Engprofile/>}/>
-              <Route path="/engineerDashboard/engProjects" element={<Engprojects/>}/>
+              <Route path="/engineerDashboard/Form" element={<Engineerform/>}/>
+              <Route path="/engineerDashboard/Profile" element={<Engprofile/>}/>
+              <Route path="/engineerDashboard/calendar" element={<Engineercalendar/>}/>
+              <Route path="/engineerDashboard/Projects" element={<Engprojects/>}/>
+              <Route path="/icDesign/icboard" element={<Icboard/>}/>
+              <Route path="/icDesign/icForm" element={<Icform/>}/>
+              <Route path="/icDesign/icCalendar" element={<Iccalendar/>}/>
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/" element={<Dashboard />} />
               <Route path="/team" element={<Team />} />

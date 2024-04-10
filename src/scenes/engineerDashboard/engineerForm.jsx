@@ -1,4 +1,5 @@
-import { Box, Button, TextField } from "@mui/material";
+import React from "react";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -37,19 +38,20 @@ const Engineerform = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Specialization"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.specialization}
-                name="specialization"
-                error={!!touched.specialization && !!errors.specialization}
-                helperText={touched.specialization && errors.specialization}
-                sx={{ gridColumn: "span 2" }}
-              />
+              <FormControl fullWidth variant="filled" sx={{ gridColumn: "span 2" }}>
+                <InputLabel id="specialization-label">Specialization</InputLabel>
+                <Select
+                  labelId="specialization-label"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.specialization}
+                  name="specialization"
+                >
+                  <MenuItem value="DV">DV (Design Verifivation)</MenuItem>
+                  <MenuItem value="DFT">DFT (Design For Test)</MenuItem>
+                  <MenuItem value="PD">PD (Physical Design)</MenuItem>
+                </Select>
+              </FormControl>
               <TextField
                 fullWidth
                 variant="filled"
@@ -63,19 +65,7 @@ const Engineerform = () => {
                 helperText={touched.years && errors.years}
                 sx={{ gridColumn: "span 2" }}
               />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="number"
-                label="Projects Delivered"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.projects}
-                name="projects"
-                error={!!touched.projects && !!errors.projects}
-                helperText={touched.projects && errors.projects}
-                sx={{ gridColumn: "span 2" }}
-              />
+
               <TextField
                 fullWidth
                 variant="filled"
@@ -89,6 +79,19 @@ const Engineerform = () => {
                 helperText={touched.pastprojects && errors.pastprojects}
                 sx={{ gridColumn: "span 2" }}
               />
+              <FormControl fullWidth variant="filled" sx={{ gridColumn: "span 2" }}>
+                <InputLabel id="owork-label">Open To Work</InputLabel>
+                <Select
+                  labelId="owork-label"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.owork}
+                  name="owork"
+                >
+                  <MenuItem value="Yes">Yes</MenuItem>
+                  <MenuItem value="No">No</MenuItem>
+                </Select>
+              </FormControl>
               <TextField
                 fullWidth
                 variant="filled"
@@ -103,6 +106,7 @@ const Engineerform = () => {
                 sx={{ gridColumn: "span 4" }}
               />
               
+              
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
@@ -116,27 +120,22 @@ const Engineerform = () => {
   );
 };
 
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const checkoutSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  contact: yup
-    .string()
-    .matches(phoneRegExp, "Phone number is not valid")
-    .required("required"),
-  address1: yup.string().required("required"),
-  address2: yup.string().required("required"),
+  specialization: yup.string().required("Required"),
+  years: yup.number().required("Required"),
+  pastprojects: yup.number().required("Required"),
+  location: yup.string().required("Required"),
+  owork:yup.string().required("Required"),
+
 });
+
 const initialValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  contact: "",
-  address1: "",
-  address2: "",
+  specialization: "",
+  years: "",
+  projects: "",
+  pastprojects: "",
+  location: "",
 };
 
 export default Engineerform;

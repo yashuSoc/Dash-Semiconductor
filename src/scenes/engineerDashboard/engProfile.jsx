@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataInvoices } from "../../data/mockData";
@@ -8,36 +8,26 @@ const Engprofile = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "eid", headerName: "ID" },
     {
-      field: "name",
-      headerName: "Name",
+      field: "especialization",
+      headerName: "Specialization",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "phone",
-      headerName: "Phone Number",
+      field: "elocation",
+      headerName: "Preferred Location",
       flex: 1,
     },
     {
-      field: "email",
+      field: "Total Exp.(in years)",
       headerName: "Email",
       flex: 1,
     },
     {
-      field: "cost",
-      headerName: "Cost",
-      flex: 1,
-      renderCell: (params) => (
-        <Typography color={colors.greenAccent[500]}>
-          ${params.row.cost}
-        </Typography>
-      ),
-    },
-    {
-      field: "date",
-      headerName: "Date",
+      field: "work",
+      headerName: "Open to Work",
       flex: 1,
     },
   ];

@@ -75,7 +75,7 @@ const Sidebar = () => {
                 ml="15px"
               >
                 <Typography variant="h3" color={colors.grey[100]}>
-                  Engineer 
+                  Engineer Dashboard
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
@@ -129,14 +129,14 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Engineer Profile"
-              to="/engineerDashboard/engProfile"
+              to="/engineerDashboard/Profile"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Engineer Projects"
-              to="/engineerDashboard/engProjects"
+              to="/engineerDashboard/Projects"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -151,14 +151,14 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Profile Form"
-              to="/engineerDashboard/engineerForm"
+              to="/engineerDashboard/Form"
               icon={<PersonOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Calendar"
-              to="/calendar"
+              to="/engineerDashboard/calendar"
               icon={<CalendarTodayOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

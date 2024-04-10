@@ -41,7 +41,7 @@ const Customerform = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Company Name"
+                label="Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.companyName}
@@ -57,10 +57,10 @@ const Customerform = () => {
                 label="Total Number Of Employees"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.employees}
-                name="employees"
-                error={!!touched.employees && !!errors.employees}
-                helperText={touched.employees && errors.employees}
+                value={values.cemployees}
+                name="cemployees"
+                error={!!touched.cemployees && !!errors.cemployees}
+                helperText={touched.cemployees && errors.cemployees}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -70,10 +70,10 @@ const Customerform = () => {
                 label="Projects Delivered"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.projects}
-                name="projects"
-                error={!!touched.projects && !!errors.projects}
-                helperText={touched.projects && errors.projects}
+                value={values.cprojects}
+                name="cprojects"
+                error={!!touched.cprojects && !!errors.cprojects}
+                helperText={touched.cprojects && errors.cprojects}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -83,10 +83,10 @@ const Customerform = () => {
                 label="Existing Clients"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.clients}
-                name="clients"
-                error={!!touched.clients && !!errors.clients}
-                helperText={touched.clients && errors.clients}
+                value={values.cclients}
+                name="cclients"
+                error={!!touched.cclients && !!errors.cclients}
+                helperText={touched.cclients && errors.cclients}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -96,13 +96,12 @@ const Customerform = () => {
                 label="Location"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.location}
-                name="location"
-                error={!!touched.location && !!errors.location}
-                helperText={touched.location && errors.location}
+                value={values.clocation}
+                name="clocation"
+                error={!!touched.clocation && !!errors.clocation}
+                helperText={touched.clocation && errors.clocation}
                 sx={{ gridColumn: "span 4" }}
               />
-              
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained">
@@ -116,27 +115,19 @@ const Customerform = () => {
   );
 };
 
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
-
 const checkoutSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  contact: yup
-    .string()
-    .matches(phoneRegExp, "Phone number is not valid")
-    .required("required"),
-  address1: yup.string().required("required"),
-  address2: yup.string().required("required"),
+  companyName: yup.string().required("Required"),
+  cemployees: yup.number().required("Required"),
+  cprojects: yup.number().required("Required"),
+  cclients: yup.number().required("Required"),
+  clocation: yup.string().required("Required"),
 });
 const initialValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  contact: "",
-  address1: "",
-  address2: "",
+  companyName: "",
+  cemployees: "",
+  cprojects: "",
+  cclients: "",
+  clocation: "",
 };
 
 export default Customerform;
