@@ -130,7 +130,7 @@ const Icdesignbar = () => {
             </Typography>
             <Item
               title="IC Design Profile"
-              to="/icDesign/design"
+              to="/icDesign/icdesign"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

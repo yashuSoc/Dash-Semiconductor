@@ -32,6 +32,7 @@ import Icdesignbar from "./scenes/global/IcDesignbar";
 import Icboard from "./scenes/icDesign/icboard";
 import Iccalendar from "./scenes/icDesign/icCalendar";
 import Icform from "./scenes/icDesign/icForm";
+import Icprofile from "./scenes/icDesign/icdesign";
 import Customerclients from "./scenes/customerDashboard/custClients";
 import Customerprojects from "./scenes/customerDashboard/custprojects";
 import Domaincalendar from "./scenes/domainLeader/domaincalendar";
@@ -41,6 +42,8 @@ import Domainprofile from "./scenes/domainLeader/domainleader";
 import Domainclients from "./scenes/domainLeader/domainclient";
 import Domainprojects from "./scenes/domainLeader/domainproject";
 import Domainform from "./scenes/domainLeader/domainform";
+import Icclients from "./scenes/icDesign/icClients";
+import Icprojects from "./scenes/icDesign/icProjects";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -89,6 +92,9 @@ function App() {
               <Route path="/engineerDashboard/calendar" element={<Engineercalendar/>}/>
               <Route path="/engineerDashboard/Projects" element={<Engprojects/>}/>
               <Route path="/icDesign/icboard" element={<Icboard/>}/>
+              <Route path="/icDesign/icdesign" element={<Icprofile/>}/>
+              <Route path="/icDesign/icClients" element={<Icclients/>}/>
+              <Route path="/icDesign/icProjects" element={<Icprojects/>}/>
               <Route path="/icDesign/icForm" element={<Icform/>}/>
               <Route path="/icDesign/icCalendar" element={<Iccalendar/>}/>
               <Route path="/signup" element={<SignupPage />} />
