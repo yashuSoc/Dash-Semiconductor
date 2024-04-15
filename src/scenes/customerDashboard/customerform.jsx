@@ -1,14 +1,47 @@
 import { Box, Button, TextField } from "@mui/material";
-import { Formik } from "formik";
+import { useState } from 'react';
+import axios from 'axios';
 import * as yup from "yup";
+import { Formik } from "formik";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
 
-const Customerform = () => {
+const CustomerForm = () => {
+  const [submitted, setSubmitted] = useState(false);
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const handleFormSubmit = (values) => {
-    console.log(values);
+  const initialValues = {
+    companyName: "",
+    cemployees: "",
+    cprojects: "",
+    cclients: "",
+    clocation: "",
+  };
+
+  const checkoutSchema = yup.object().shape({
+    companyName: yup.string().required("Required"),
+    cemployees: yup.number().required("Required"),
+    cprojects: yup.number().required("Required"),
+    cclients: yup.number().required("Required"),
+    clocation: yup.string().required("Required"),
+  });
+
+  const handleFormSubmit = async (values) => {
+    const { companyName, clocation, cemployees, cprojects, cclients } = values;
+    try {
+      await axios.post(`http://localhost:3000/customersInprogress`, {
+        companyName,
+        location: clocation,
+        numberOfEmployees: cemployees,
+        projectsDelivered: cprojects,
+        existingClients: cclients
+      });
+      alert("Request Accepted");
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error accepting request:', error);
+      alert("Error accepting request");
+    }
   };
 
   return (
@@ -16,9 +49,9 @@ const Customerform = () => {
       <Header title="Create User" subtitle="Create a New User Profile" />
 
       <Formik
-        onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={checkoutSchema}
+        onSubmit={handleFormSubmit}
       >
         {({
           values,
@@ -41,19 +74,20 @@ const Customerform = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Name"
+                label="Company Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.companyName}
                 name="companyName"
                 error={!!touched.companyName && !!errors.companyName}
                 helperText={touched.companyName && errors.companyName}
-                sx={{ gridColumn: "span 2" }}
+                sx={{ gridColumn: "span 4" }}
+                required
               />
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
+                type="number"
                 label="Total Number Of Employees"
                 onBlur={handleBlur}
                 onChange={handleChange}
@@ -62,11 +96,12 @@ const Customerform = () => {
                 error={!!touched.cemployees && !!errors.cemployees}
                 helperText={touched.cemployees && errors.cemployees}
                 sx={{ gridColumn: "span 2" }}
+                required
               />
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
+                type="number"
                 label="Projects Delivered"
                 onBlur={handleBlur}
                 onChange={handleChange}
@@ -75,11 +110,12 @@ const Customerform = () => {
                 error={!!touched.cprojects && !!errors.cprojects}
                 helperText={touched.cprojects && errors.cprojects}
                 sx={{ gridColumn: "span 2" }}
+                required
               />
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
+                type="number"
                 label="Existing Clients"
                 onBlur={handleBlur}
                 onChange={handleChange}
@@ -88,6 +124,7 @@ const Customerform = () => {
                 error={!!touched.cclients && !!errors.cclients}
                 helperText={touched.cclients && errors.cclients}
                 sx={{ gridColumn: "span 2" }}
+                required
               />
               <TextField
                 fullWidth
@@ -101,11 +138,12 @@ const Customerform = () => {
                 error={!!touched.clocation && !!errors.clocation}
                 helperText={touched.clocation && errors.clocation}
                 sx={{ gridColumn: "span 4" }}
+                required
               />
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
-                Create New User
+              <Button type="submit" color="secondary" variant="contained" disabled={submitted}>
+                Submit
               </Button>
             </Box>
           </form>
@@ -115,19 +153,4 @@ const Customerform = () => {
   );
 };
 
-const checkoutSchema = yup.object().shape({
-  companyName: yup.string().required("Required"),
-  cemployees: yup.number().required("Required"),
-  cprojects: yup.number().required("Required"),
-  cclients: yup.number().required("Required"),
-  clocation: yup.string().required("Required"),
-});
-const initialValues = {
-  companyName: "",
-  cemployees: "",
-  cprojects: "",
-  cclients: "",
-  clocation: "",
-};
-
-export default Customerform;
+export default CustomerForm;

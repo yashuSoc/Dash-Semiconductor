@@ -34,6 +34,13 @@ import Iccalendar from "./scenes/icDesign/icCalendar";
 import Icform from "./scenes/icDesign/icForm";
 import Customerclients from "./scenes/customerDashboard/custClients";
 import Customerprojects from "./scenes/customerDashboard/custprojects";
+import Domaincalendar from "./scenes/domainLeader/domaincalendar";
+import Domainbar from "./scenes/global/Domainbar";
+import Domainboard from "./scenes/domainLeader/domainDashboard";
+import Domainprofile from "./scenes/domainLeader/domainleader";
+import Domainclients from "./scenes/domainLeader/domainclient";
+import Domainprojects from "./scenes/domainLeader/domainproject";
+import Domainform from "./scenes/domainLeader/domainform";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -41,6 +48,7 @@ function App() {
   const isCustomerProfileRoute = location.pathname.startsWith("/customerDashboard");
   const isEngineerDashboardRoute = location.pathname.startsWith("/engineerDashboard");
   const isICDesignerDashboardRoute = location.pathname.startsWith("/icDesign");
+  const isDomainLeaderRoute = location.pathname.startsWith("/domainLeader")
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -49,15 +57,27 @@ function App() {
         
         <div className="app">
           {/* Conditionally render the sidebar based on the route */}
-          {isCustomerProfileRoute ? <Customerbar /> : 
-            (isEngineerDashboardRoute ? <Engineerbar /> : 
-              (isICDesignerDashboardRoute ? <Icdesignbar /> : <Sidebar isSidebar={isSidebar} />)
-            )
-          }
+{isCustomerProfileRoute ? <Customerbar /> : 
+  (isEngineerDashboardRoute ? <Engineerbar /> : 
+    (isICDesignerDashboardRoute ? <Icdesignbar /> : 
+      (isDomainLeaderRoute ? <Domainbar/> : 
+        (isSidebar && <Sidebar />)
+      )
+    )
+  )
+}
+
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
+            <Route path="/domainLeader/domainDashboard" element={<Domainboard/>}/>
+              <Route path="/domainLeader/domainleader" element={<Domainprofile/>}/>
+              <Route path="/domainLeader/domainproject" element={<Domainprojects/>}/>
+              <Route path="/domainLeader/domaincalendar" element={<Domaincalendar/>}/>
+              <Route path="/domainLeader/domainclients" element={<Domainclients/>}/>
+              <Route path="/domainLeader/domainform" element={<Domainform/>}/>
               <Route path="/customerDashboard" element={<Customerprofile/>}/>
+
               <Route path="/customerDashboard/Clients" element={<Customerclients/>}/>
               <Route path="/customerDashboard/Projects" element={<Customerprojects/>}/>
               <Route path="/customerDashboard/customerform" element={<Customerform/>}/>
