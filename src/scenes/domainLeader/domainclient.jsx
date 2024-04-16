@@ -1,23 +1,40 @@
 import { Box, useTheme } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
 import Header from "../../components/Header";
-
+import axios from "axios";
 const Domainclients = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Function to fetch data from the API
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/domainclients");
+      // Assuming the response data is an array of objects
+      // Assign unique IDs to each row for DataGrid
+      const formattedData = response.data.map((row, index) => ({ ...row, id: index + 1 }));
+      setData(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   const columns = [
-    { field: "cid", headerName: "Client ID" },
+    { field: "clientid", headerName: "Client ID" },
     {
-      field: "name",
+      field: "clientname",
       headerName: "Client Name",
       type: "text",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "clients",
+      field: "clientdetails",
       headerName: "Client Details",
       type: "text",
       headerAlign: "left",
@@ -61,7 +78,7 @@ const Domainclients = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        <DataGrid checkboxSelection rows={data} columns={columns} getRowId={(row) => row.id}/>
       </Box>
     </Box>
   );

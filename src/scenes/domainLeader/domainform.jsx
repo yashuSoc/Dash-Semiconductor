@@ -38,25 +38,11 @@ const Domainform = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
-              <FormControl fullWidth variant="filled" sx={{ gridColumn: "span 2" }}>
-                <InputLabel id="specialization-label">Specialization</InputLabel>
-                <Select
-                  labelId="specialization-label"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.specialization}
-                  name="specialization"
-                >
-                  <MenuItem value="DV">DV (Design Verifivation)</MenuItem>
-                  <MenuItem value="DFT">DFT (Design For Test)</MenuItem>
-                  <MenuItem value="PD">PD (Physical Design)</MenuItem>
-                </Select>
-              </FormControl>
               <TextField
                 fullWidth
                 variant="filled"
                 type="number"
-                label="Total Exp.(in years)"
+                label="Total Experience (in Years)"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.years}
@@ -65,46 +51,46 @@ const Domainform = () => {
                 helperText={touched.years && errors.years}
                 sx={{ gridColumn: "span 2" }}
               />
-
               <TextField
                 fullWidth
                 variant="filled"
                 type="number"
-                label="Past Projects"
+                label="Number of Tapeouts Handeled"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.pastprojects}
-                name="pastprojects"
-                error={!!touched.pastprojects && !!errors.pastprojects}
-                helperText={touched.pastprojects && errors.pastprojects}
+                value={values.tapeouts}
+                name="tapeouts"
+                error={!!touched.tapeouts && !!errors.tapeouts}
+                helperText={touched.tapeouts && errors.tapeouts}
                 sx={{ gridColumn: "span 2" }}
               />
-              <FormControl fullWidth variant="filled" sx={{ gridColumn: "span 2" }}>
-                <InputLabel id="owork-label">Open To Work</InputLabel>
-                <Select
-                  labelId="owork-label"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.owork}
-                  name="owork"
-                >
-                  <MenuItem value="Yes">Yes</MenuItem>
-                  <MenuItem value="No">No</MenuItem>
-                </Select>
-              </FormControl>
               <TextField
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Preferred Location"
+                label="Details of Past Projects"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.location}
-                name="location"
-                error={!!touched.location && !!errors.location}
-                helperText={touched.location && errors.location}
-                sx={{ gridColumn: "span 4" }}
+                value={values.projects}
+                name="projects"
+                error={!!touched.projects && !!errors.projects}
+                helperText={touched.projects && errors.projects}
+                sx={{ gridColumn: "span 2" }}
               />
+              <TextField
+                fullWidth
+                variant="filled"
+                type="number"
+                label="Clients Served in the past "
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.clients}
+                name="clients"
+                error={!!touched.clients && !!errors.clients}
+                helperText={touched.clients && errors.clients}
+                sx={{ gridColumn: "span 2" }}
+              />
+
               
               
             </Box>
@@ -122,7 +108,6 @@ const Domainform = () => {
 
 
 const checkoutSchema = yup.object().shape({
-  specialization: yup.string().required("Required"),
   years: yup.number().required("Required"),
   pastprojects: yup.number().required("Required"),
   location: yup.string().required("Required"),

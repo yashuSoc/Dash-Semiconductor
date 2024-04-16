@@ -44,10 +44,12 @@ import Domainprojects from "./scenes/domainLeader/domainproject";
 import Domainform from "./scenes/domainLeader/domainform";
 import Icclients from "./scenes/icDesign/icClients";
 import Icprojects from "./scenes/icDesign/icProjects";
+import SigninPage from "./scenes/signin";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const location = useLocation();
+  const isAuthPage = location.pathname === "/signin" || location.pathname === "/signup";
   const isCustomerProfileRoute = location.pathname.startsWith("/customerDashboard");
   const isEngineerDashboardRoute = location.pathname.startsWith("/engineerDashboard");
   const isICDesignerDashboardRoute = location.pathname.startsWith("/icDesign");
@@ -59,16 +61,18 @@ function App() {
         <CssBaseline />
         
         <div className="app">
-          {/* Conditionally render the sidebar based on the route */}
-{isCustomerProfileRoute ? <Customerbar /> : 
-  (isEngineerDashboardRoute ? <Engineerbar /> : 
-    (isICDesignerDashboardRoute ? <Icdesignbar /> : 
-      (isDomainLeaderRoute ? <Domainbar/> : 
-        (isSidebar && <Sidebar />)
-      )
-    )
-  )
-}
+       {/* Conditionally render the sidebar based on the route */}
+          {isAuthPage ? null :
+            (isCustomerProfileRoute ? <Customerbar /> :
+              (isEngineerDashboardRoute ? <Engineerbar /> :
+                (isICDesignerDashboardRoute ? <Icdesignbar /> :
+                  (isDomainLeaderRoute ? <Domainbar /> :
+                    (isSidebar && <Sidebar />)
+                  )
+                )
+              )
+            )
+          }
 
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
@@ -98,6 +102,7 @@ function App() {
               <Route path="/icDesign/icForm" element={<Icform/>}/>
               <Route path="/icDesign/icCalendar" element={<Iccalendar/>}/>
               <Route path="/signup" element={<SignupPage />} />
+              <Route path="/signin" element={<SigninPage/>}/>
               <Route path="/" element={<Dashboard />} />
               <Route path="/team" element={<Team />} />
               <Route path="/contacts" element={<Contacts />} />

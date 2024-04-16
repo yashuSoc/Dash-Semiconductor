@@ -1,36 +1,56 @@
+import React, { useEffect, useState } from "react";
 import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataInvoices } from "../../data/mockData";
 import Header from "../../components/Header";
+import axios from "axios";
 
 const Engprofile = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]);
   const columns = [
-    { field: "eid", headerName: "ID" },
+    { field: "engineerid", headerName: "ID" },
     {
-      field: "especialization",
+      field: "specialization",
       headerName: "Specialization",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "elocation",
+      field: "prefferedlocation",
       headerName: "Preferred Location",
       flex: 1,
+      cellClassName: "name-column--cell",
+    
     },
     {
-      field: "Total Exp.(in years)",
-      headerName: "Email",
+      field: "expinyears",
+      headerName: "Total Exp.(in years)",
+      cellClassName: "name-column--cell",
       flex: 1,
     },
     {
-      field: "work",
+      field: "opentowork",
       headerName: "Open to Work",
+      cellClassName: "name-column--cell",
       flex: 1,
     },
   ];
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/engineer");
+      // Assuming the response data is an array of objects
+      // Assign unique IDs to each row for DataGrid
+      const formattedData = response.data.map((row, index) => ({ ...row, id: index + 1 }));
+      setData(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <Box m="20px">
@@ -64,7 +84,7 @@ const Engprofile = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} />
+        <DataGrid checkboxSelection rows={data} columns={columns} getRowId={(row) => row.id} />
       </Box>
     </Box>
   );

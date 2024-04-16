@@ -44,11 +44,7 @@ const SignupPage = ({ onSignInClick, onHide }) => {
         setPasswordError('Please enter a password');
       } else if (!validatePassword(value)) {
         setPasswordError(
-          <ul className="text-xs text-red-500">
-            <li>* Password must be at least 8 characters long</li>
-            <li>* Include at least one uppercase letter & lowercase letter</li>
-            <li>* Include at least one number & one special character</li>
-          </ul>
+          '* Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character'
         );
       } else {
         setPasswordError('');
@@ -68,14 +64,14 @@ const SignupPage = ({ onSignInClick, onHide }) => {
     const handleSubmit = async (e) => {
       e.preventDefault();
       let formValid = true;
-  
+      
       if (!validateEmail(email)) {
         setEmailError('Please enter a valid email address');
         formValid = false;
       }
   
       if (password.trim() === '' || !validatePassword(password)) {
-        setPasswordError('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character');
+        setPasswordError('Please enter a valid password');
         formValid = false;
       }
   
@@ -84,30 +80,30 @@ const SignupPage = ({ onSignInClick, onHide }) => {
         formValid = false;
       }
   
+      if (!recaptchaValue) {
+        console.log('Please complete the ReCAPTCHA');
+        return;
+      }
+  
       if (formValid) {
         try {
           const response = await axios.post('http://localhost:3000/signup', {
             email: email,
             password: password,
-            dropdownValue: dropdownValue
+            role: dropdownValue
           });
           console.log(response.data);
           setEmail('');
           setPassword('');
           setDropdownValue('');
           setSubmitted(true);
-          onHide();
+          if (typeof onHide === 'function') {
+            onHide(); // Call onHide function to hide the signup page or perform other actions
+          }
           alert("Signup successful");
         } catch (error) {
           console.error('Error submitting form:', error);
         }
-      }
-    };
-  
-    const handleCaptchaSubmit = () => {
-      if (!recaptchaValue) {
-        console.log('Please complete the ReCAPTCHA');
-        return;
       }
     };
   
@@ -171,7 +167,6 @@ const SignupPage = ({ onSignInClick, onHide }) => {
               color="primary"
               fullWidth
               type="submit"
-              onClick={handleCaptchaSubmit}
               style={{ marginTop: '10px' }}
             >
               Submit

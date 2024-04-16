@@ -1,13 +1,18 @@
+import React from "react";
+import { useState } from "react";
 import { Box, Button, TextField } from "@mui/material";
-import { useState } from 'react';
-import axios from 'axios';
-import * as yup from "yup";
 import { Formik } from "formik";
+import * as yup from "yup";
+import axios from "axios";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
+import CustomAlert from "../../components/CustomAlert"; 
 
 const CustomerForm = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notificationSeverity, setNotificationSeverity] = useState("success");
+  const [notificationMessage, setNotificationMessage] = useState("");
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const initialValues = {
@@ -36,12 +41,22 @@ const CustomerForm = () => {
         projectsDelivered: cprojects,
         existingClients: cclients
       });
-      alert("Request Accepted");
+      setNotificationSeverity("success");
+      setNotificationMessage("Customer Created");
       setSubmitted(true);
     } catch (error) {
       console.error('Error accepting request:', error);
-      alert("Error accepting request");
+      setNotificationSeverity("error");
+      setNotificationMessage("Error accepting request");
     }
+    setNotificationOpen(true);
+  };
+
+  const handleNotificationClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNotificationOpen(false);
   };
 
   return (
@@ -81,7 +96,7 @@ const CustomerForm = () => {
                 name="companyName"
                 error={!!touched.companyName && !!errors.companyName}
                 helperText={touched.companyName && errors.companyName}
-                sx={{ gridColumn: "span 4" }}
+                sx={{ gridColumn: "span 2" }}
                 required
               />
               <TextField
@@ -149,6 +164,14 @@ const CustomerForm = () => {
           </form>
         )}
       </Formik>
+
+      {/* Custom alert component */}
+      <CustomAlert
+        open={notificationOpen}
+        onClose={handleNotificationClose}
+        severity={notificationSeverity}
+        message={notificationMessage}
+      />
     </Box>
   );
 };

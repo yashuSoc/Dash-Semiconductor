@@ -4,17 +4,47 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
+import { useState } from "react";
+import axios from "axios";
+import CustomAlert from "../../components/CustomAlert";
 
 const Engineerform = () => {
+  const [submitted, setSubmitted] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notificationSeverity, setNotificationSeverity] = useState("success");
+  const [notificationMessage, setNotificationMessage] = useState("");
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const handleFormSubmit = (values) => {
-    console.log(values);
+  const handleFormSubmit = async (values) => {
+    const { specialization, years, pastprojects, owork, location } = values;
+    try {
+      await axios.post(`http://localhost:3000/engineerInprogress`, {
+        specialization,
+        years,
+        pastprojects,
+        owork,
+        location,
+      });
+      setNotificationSeverity("success");
+      setNotificationMessage("Engineer Registered");
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error accepting request:', error);
+      setNotificationSeverity("error");
+      setNotificationMessage("Error accepting request");
+    }
+    setNotificationOpen(true);
+  };
+  const handleNotificationClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNotificationOpen(false);
   };
 
   return (
     <Box m="20px">
-      <Header title="Create User" subtitle="Create a New User Profile" />
+      <Header title="Register Engineer" subtitle="Register a New Engineer" />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -85,7 +115,7 @@ const Engineerform = () => {
                   labelId="owork-label"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.owork}
+                  value={values.owork || ''}
                   name="owork"
                 >
                   <MenuItem value="Yes">Yes</MenuItem>
@@ -109,13 +139,19 @@ const Engineerform = () => {
               
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
+              <Button type="submit" color="secondary" variant="contained" disabled={submitted}>
                 Register Engineer
               </Button>
             </Box>
           </form>
         )}
       </Formik>
+      <CustomAlert
+        open={notificationOpen}
+        onClose={handleNotificationClose}
+        severity={notificationSeverity}
+        message={notificationMessage}
+      />
     </Box>
   );
 };
@@ -132,10 +168,10 @@ const checkoutSchema = yup.object().shape({
 
 const initialValues = {
   specialization: "",
-  years: "",
-  projects: "",
-  pastprojects: "",
-  location: "",
+        years:"",
+        pastprojects:"",
+        owork:"",
+        location:"",
 };
 
 export default Engineerform;

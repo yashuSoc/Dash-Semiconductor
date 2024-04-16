@@ -1,41 +1,45 @@
+import React, { useEffect, useState } from "react";
 import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
 import Header from "../../components/Header";
+import axios from "axios";
 
 const Customerclients = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const columns = [
-    { field: "cid", headerName: "Client ID" },
-    {
-      field: "name",
-      headerName: "Client Name",
-      type: "text",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "clients",
-      headerName: "Client Details",
-      type: "text",
-      headerAlign: "left",
-      align: "left",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
+  const [data, setData] = useState([]);
 
+  // Define columns for the DataGrid
+  const columns = [
+    { field: "clientid", headerName: "Client ID" , cellClassName: "name-column--cell"  },
+    { field: "clientname", headerName: "Client Name", flex: 1 , cellClassName: "name-column--cell" },
+    { field: "clientdetails", headerName: "Client Details", flex: 1 , cellClassName: "name-column--cell" },
   ];
+
+  // Fetch data from the API when the component mounts
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Function to fetch data from the API
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/customerClients");
+      // Assuming the response data is an array of objects
+      // Assign unique IDs to each row for DataGrid
+      const formattedData = response.data.map((row, index) => ({ ...row, id: index + 1 }));
+      setData(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <Box m="20px">
+      {/* Header component */}
       <Header title="CUSTOMER CLIENTS" subtitle="Data of Customer's Clients" />
-      {/* <Customerbar/> */}
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
+      <Box m="40px 0 0 0" height="75vh" sx={{
           "& .MuiDataGrid-root": {
             border: "none",
           },
@@ -59,9 +63,13 @@ const Customerclients = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
-        }}
-      >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        }}>
+        <DataGrid
+          rows={data} // Pass data to the DataGrid
+          columns={columns} // Pass columns to the DataGrid
+          checkboxSelection
+          getRowId={(row) => row.id} // Provide a function to get unique row IDs
+        />
       </Box>
     </Box>
   );

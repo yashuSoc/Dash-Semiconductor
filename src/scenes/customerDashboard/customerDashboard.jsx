@@ -1,62 +1,46 @@
 import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
 import Header from "../../components/Header";
+import axios from "axios";
 
 const Customerprofile = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const columns = [
-    { field: "id", headerName: "ID" },
-    {
-      field: "name",
-      headerName: "Name",
-      type: "text",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "location",
-      headerName:"Location",
-      headerAlign: "left",
-      type:"text",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "Employees",
-      headerName: "No. of Employee",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    
-    {
-      field: "Projects",
-      headerName: "Projects Delivered",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "clients",
-      headerName: "Existing Clients",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
+  const [customers, setCustomers] = useState([]);
+  
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/customer");
+      const dataWithIds = response.data.map((row, index) => ({
+        id: index + 1, // Assuming index starts from 0, you can adjust this if necessary
+        ...row
+      }));
+      console.log(dataWithIds);
+      setCustomers(dataWithIds);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle the error gracefully, e.g., show an error message to the user
+    }
+  };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const columns = [
+    { field: "customerid", headerName: "Customer ID" }, // Update field name to match data
+    { field: "name", headerName: "Name", flex: 1, cellClassName: "name-column--cell" },
+    { field: "location", headerName: "Location", flex: 2, cellClassName: "name-column--cell" },
+    { field: "noofemployees", headerName: "No. of Employees", type: "number", headerAlign: "left", align: "left", flex:1,cellClassName: "name-column--cell"  },
+    { field: "cvid", headerName: "CV ID", type: "number", headerAlign: "left", align: "left", flex:1, cellClassName: "name-column--cell"  }, // Update field name to match data
   ];
+  
 
   return (
     <Box m="20px">
       <Header title="Customers" subtitle="Managing the Customers" />
-      {/* <Customerbar/> */}
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -86,7 +70,11 @@ const Customerprofile = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        <DataGrid
+          rows={customers}
+          columns={columns}
+          getRowId={(row) => row.id} // Specify the unique identifier for each row
+        />
       </Box>
     </Box>
   );
