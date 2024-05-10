@@ -1,18 +1,21 @@
 import { Box, useTheme } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
 import Header from "../../components/Header";
+import axios from "axios";
+
 
 const Icprofile = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]); 
   const columns = [
     { field: "id", headerName: "ID" },
     {
       field: "name",
       headerName: "Name",
-      type: "text",
+      type: "string",
       flex: 1,
       cellClassName: "name-column--cell",
     },
@@ -20,21 +23,36 @@ const Icprofile = () => {
       field: "location",
       headerName:"Location",
       headerAlign: "left",
-      type:"text",
-      flex:1,
+      type:"string",
+      flex:2,
       cellClassName: "name-column--cell",
     },
     {
-      field: "Employees",
+      field: "noofemployees",
       headerName: "No. of Employee",
       type: "number",
       headerAlign: "left",
+      align:"left",
       flex:1,
-      align: "left",
+      cellClassName: "name-column--cell",
     },
     
 
   ];
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/icdesign");
+      // Assuming the response data is an array of objects
+      // Assign unique IDs to each row for DataGrid
+      const formattedData = response.data.map((row, index) => ({ ...row, id: index + 1 }));
+      setData(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <Box m="20px">
@@ -69,7 +87,7 @@ const Icprofile = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        <DataGrid checkboxSelection rows={data} columns={columns}  getRowId={(row) => row.id}/>
       </Box>
     </Box>
   );

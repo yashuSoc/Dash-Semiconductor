@@ -5,7 +5,6 @@ import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
 import Invoices from "./scenes/invoices";
 import Contacts from "./scenes/contacts";
-import Team from "./scenes/team";
 import Bar from "./scenes/bar";
 import Form from "./scenes/form";
 import Line from "./scenes/line";
@@ -45,15 +44,21 @@ import Domainform from "./scenes/domainLeader/domainform";
 import Icclients from "./scenes/icDesign/icClients";
 import Icprojects from "./scenes/icDesign/icProjects";
 import SigninPage from "./scenes/signin";
+import Customerapproved from "./scenes/team/approved";
+import Customerprogress from "./scenes/team/inprogress";
+import Customerrejected from "./scenes/team/rejected";
+import CustomerRequest from "./scenes/customerDashboard/customerRequest";
+import CustomerAdminProfile from "./scenes/team";
+import CustomerRequirements from "./scenes/team/requests";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const location = useLocation();
-  const isAuthPage = location.pathname === "/signin" || location.pathname === "/signup";
   const isCustomerProfileRoute = location.pathname.startsWith("/customerDashboard");
   const isEngineerDashboardRoute = location.pathname.startsWith("/engineerDashboard");
   const isICDesignerDashboardRoute = location.pathname.startsWith("/icDesign");
-  const isDomainLeaderRoute = location.pathname.startsWith("/domainLeader")
+  const isDomainLeaderRoute = location.pathname.startsWith("/domainLeader");
+  const isAuthPage = location.pathname === "/signin" || location.pathname === "/signup";
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -75,7 +80,7 @@ function App() {
           }
 
           <main className="content">
-            <Topbar setIsSidebar={setIsSidebar} />
+          {!isAuthPage && <Topbar setIsSidebar={setIsSidebar} />}
             <Routes>
             <Route path="/domainLeader/domainDashboard" element={<Domainboard/>}/>
               <Route path="/domainLeader/domainleader" element={<Domainprofile/>}/>
@@ -84,7 +89,7 @@ function App() {
               <Route path="/domainLeader/domainclients" element={<Domainclients/>}/>
               <Route path="/domainLeader/domainform" element={<Domainform/>}/>
               <Route path="/customerDashboard" element={<Customerprofile/>}/>
-
+              <Route path="/customerDashboard/customerRequest" element={<CustomerRequest/>}/>
               <Route path="/customerDashboard/Clients" element={<Customerclients/>}/>
               <Route path="/customerDashboard/Projects" element={<Customerprojects/>}/>
               <Route path="/customerDashboard/customerform" element={<Customerform/>}/>
@@ -104,7 +109,11 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/signin" element={<SigninPage/>}/>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/team" element={<Team />} />
+              <Route path="/team/requests" element={<CustomerRequirements />} />
+              <Route path="/team" element={<CustomerAdminProfile />} />
+              <Route path="/team/approved" element={<Customerapproved />} />
+              <Route path="/team/inprogress" element={<Customerprogress/>}/>
+              <Route path="/team/rejected" element={<Customerrejected/>}/>
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />
               <Route path="/engineers" element={<Engineers />}/>

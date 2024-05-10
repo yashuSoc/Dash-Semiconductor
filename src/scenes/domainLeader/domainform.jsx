@@ -1,20 +1,48 @@
 import React from "react";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
+import CustomAlert from "../../components/CustomAlert";
+import axios from "axios";
+import { useState } from "react";
 
 const Domainform = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [submitted, setSubmitted] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notificationSeverity, setNotificationSeverity] = useState("success");
+  const [notificationMessage, setNotificationMessage] = useState("");
 
-  const handleFormSubmit = (values) => {
-    console.log(values);
+  const handleFormSubmit = async (values) => {
+    const { years, tapeouts, projects, clients } = values;
+    try {
+      await axios.post(`http://localhost:3000/domainInprogress`, {
+        years,
+        tapeouts,
+        projects,
+        clients,
+      });
+      setNotificationSeverity("success");
+      setNotificationMessage("Domain Leader Registered");
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error accepting request:', error);
+      setNotificationSeverity("error");
+      setNotificationMessage("Error accepting request");
+    }
+    setNotificationOpen(true);
   };
-
+  const handleNotificationClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNotificationOpen(false);
+  };
   return (
     <Box m="20px">
-      <Header title="Create User" subtitle="Create a New User Profile" />
+      <Header title="Register Domain Leader" subtitle="Create a New Domain Leader" />
 
       <Formik
         onSubmit={handleFormSubmit}
@@ -81,7 +109,7 @@ const Domainform = () => {
                 fullWidth
                 variant="filled"
                 type="number"
-                label="Clients Served in the past "
+                label="Clients Served in the Past"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.clients}
@@ -95,13 +123,19 @@ const Domainform = () => {
               
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
-                Register Engineer
+              <Button type="submit" color="secondary" variant="contained" disabled={submitted}>
+                Register Leader
               </Button>
             </Box>
           </form>
         )}
       </Formik>
+      <CustomAlert
+        open={notificationOpen}
+        onClose={handleNotificationClose}
+        severity={notificationSeverity}
+        message={notificationMessage}
+      />
     </Box>
   );
 };
@@ -109,18 +143,17 @@ const Domainform = () => {
 
 const checkoutSchema = yup.object().shape({
   years: yup.number().required("Required"),
-  pastprojects: yup.number().required("Required"),
-  location: yup.string().required("Required"),
-  owork:yup.string().required("Required"),
+  projects: yup.string().required("Required"),
+  tapeouts: yup.string().required("Required"),
+  clients:yup.string().required("Required"),
 
 });
 
 const initialValues = {
-  specialization: "",
   years: "",
   projects: "",
-  pastprojects: "",
-  location: "",
+  tapeouts:"",
+  clients:"",
 };
 
 export default Domainform;

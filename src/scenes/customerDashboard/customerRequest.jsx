@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
+import { useState } from "react";
 import { Box, Button, TextField } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
-import CustomAlert from "../../components/CustomAlert"; 
+import CustomAlert from "../../components/CustomAlert";
+import CustomerReq from "./custprojects";
+// import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-const CustomerForm = () => {
+const CustomerRequest = () => {
   const [submitted, setSubmitted] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationSeverity, setNotificationSeverity] = useState("success");
@@ -15,45 +18,32 @@ const CustomerForm = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const initialValues = {
-    companyName: "",
-    cemployees: "",
-    cprojects: "",
-    cclients: "",
-    clocation: "",
+    dv: "",
+    dft: "",
+    pd: "",
+    info: "",
   };
 
-  const checkoutSchema = yup.object().shape({
-    companyName: yup.string().required("Required"),
-    cemployees: yup.number().required("Required"),
-    cprojects: yup.number().required("Required"),
-    cclients: yup.number().required("Required"),
-    clocation: yup.string().required("Required"),
-  });
+  const checkoutSchema = yup.object().shape({});
 
   const handleFormSubmit = async (values) => {
-    const { companyName, clocation, cemployees, cprojects, cclients } = values;
+    const { dv, dft, pd, info } = values;
     try {
-      // Fetch user ID from session
       const user_id = sessionStorage.getItem('user_id');
-      console.log(user_id);
-      
-      // Send request with user ID
-      await axios.post(`http://localhost:3000/customersInprogress`, {
-        companyName,
-        location: clocation,
-        numberOfEmployees: cemployees,
-        projectsDelivered: cprojects,
-        existingClients: cclients,
-        user_id: user_id // Include user ID in the request
+      await axios.post(`http://localhost:3000/customerRequirements`, {
+        dv,
+        dft,
+        pd,
+        info,
+        user_id: user_id,
       });
-
       setNotificationSeverity("success");
-      setNotificationMessage("Customer Created");
+      setNotificationMessage("Request Raised");
       setSubmitted(true);
     } catch (error) {
-      console.error('Error saving form data:', error);
+      console.error("Error accepting request:", error);
       setNotificationSeverity("error");
-      setNotificationMessage("Error saving form data");
+      setNotificationMessage("Error accepting request");
     }
     setNotificationOpen(true);
   };
@@ -67,7 +57,10 @@ const CustomerForm = () => {
 
   return (
     <Box m="20px">
-      <Header title="Create User" subtitle="Create a New User Profile" />
+      <Header
+        title="Raise Request"
+        subtitle="If you do not require assistance with any specific category, please enter 0"
+      />
 
       <Formik
         initialValues={initialValues}
@@ -95,13 +88,13 @@ const CustomerForm = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Company Name"
+                label="No. Of IC Designers"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.companyName}
-                name="companyName"
-                error={!!touched.companyName && !!errors.companyName}
-                helperText={touched.companyName && errors.companyName}
+                value={values.dv}
+                name="dv"
+                error={!!touched.dv && !!errors.dv}
+                helperText={touched.dv && errors.dv}
                 sx={{ gridColumn: "span 2" }}
                 required
               />
@@ -109,13 +102,13 @@ const CustomerForm = () => {
                 fullWidth
                 variant="filled"
                 type="number"
-                label="Total Number Of Employees"
+                label="No. of Domain Leaders Required"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.cemployees}
-                name="cemployees"
-                error={!!touched.cemployees && !!errors.cemployees}
-                helperText={touched.cemployees && errors.cemployees}
+                value={values.dft}
+                name="dft"
+                error={!!touched.dft && !!errors.dft}
+                helperText={touched.dft && errors.dft}
                 sx={{ gridColumn: "span 2" }}
                 required
               />
@@ -123,53 +116,78 @@ const CustomerForm = () => {
                 fullWidth
                 variant="filled"
                 type="number"
-                label="Projects Delivered"
+                label="Number of Engineers Required"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.cprojects}
-                name="cprojects"
-                error={!!touched.cprojects && !!errors.cprojects}
-                helperText={touched.cprojects && errors.cprojects}
+                value={values.pd}
+                name="pd"
+                error={!!touched.pd && !!errors.pd}
+                helperText={touched.pd && errors.pd}
                 sx={{ gridColumn: "span 2" }}
                 required
               />
-              <TextField
+
+<TextField
                 fullWidth
                 variant="filled"
-                type="number"
-                label="Existing Clients"
+                type="string"
+                label="Additonal Information"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.cclients}
-                name="cclients"
-                error={!!touched.cclients && !!errors.cclients}
-                helperText={touched.cclients && errors.cclients}
+                value={values.info}
+                name="info"
+                error={!!touched.info && !!errors.info}
+                helperText={touched.info && errors.info}
                 sx={{ gridColumn: "span 2" }}
                 required
               />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Location"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.clocation}
-                name="clocation"
-                error={!!touched.clocation && !!errors.clocation}
-                helperText={touched.clocation && errors.clocation}
-                sx={{ gridColumn: "span 4" }}
-                required
-              />
+
+              {/* <label htmlFor="file-upload">
+                <Button
+                  variant="outlined"
+                  component="span"
+                  color="secondary"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Upload File
+                </Button>
+                {values.info && (
+                  <div>
+                    <Typography variant="body1">{values.info.name}</Typography>
+                    <Button
+                      variant="text"
+                      component="span"
+                      color="warning"
+                      onClick={() => {
+                        handleChange({
+                          target: {
+                            name: "info",
+                            value: null,
+                          },
+                        });
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
+              </label> */}
+              
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained" disabled={submitted}>
+              <Button
+                type="submit"
+                color="secondary"
+                variant="contained"
+                disabled={submitted}
+              >
                 Submit
               </Button>
             </Box>
           </form>
         )}
       </Formik>
+      <CustomerReq/>
 
       {/* Custom alert component */}
       <CustomAlert
@@ -182,4 +200,4 @@ const CustomerForm = () => {
   );
 };
 
-export default CustomerForm;
+export default CustomerRequest;

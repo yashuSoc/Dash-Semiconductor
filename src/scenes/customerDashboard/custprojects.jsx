@@ -5,42 +5,46 @@ import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import axios from "axios";
 
-const CustomerProjects = () => {
+const CustomerReq = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
 
   // Define columns for the DataGrid
   const columns = [
-    { field: "projectid", headerName: "Project ID" ,cellClassName: "name-column--cell" },
-    { field: "projectname", headerName: "Project Name", flex: 1, cellClassName: "name-column--cell"  },
-    { field: "projectdetails", headerName: "Project Details", flex: 1 , cellClassName: "name-column--cell"  },
+    { field: "no_of_ic", headerName: "IC Designer" ,flex: 1, cellClassName: "name-column--cell" },
+    { field: "no_of_dl", headerName: "Domain Leader", flex: 1, cellClassName: "name-column--cell"  },
+    { field: "no_of_eng", headerName: "Engineers", flex: 1 , cellClassName: "name-column--cell"  },
+    { field: "file", headerName: "File", flex: 1 , cellClassName: "name-column--cell"  },
   ];
 
   // Fetch data from the API when the component mounts
-  useEffect(() => {
-    fetchData();
-  }, []);
+  
 
   // Function to fetch data from the API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/customerProjects");
-      // Assuming the response data is an array of objects
+      const user_id = sessionStorage.getItem('user_id');
+      const response = await axios.get(`http://localhost:3000/customerReq?user_id=${user_id}`);
+      const userRequestData = response.data.userRequestData; // Access userRequestData array from the response
+      
       // Assign unique IDs to each row for DataGrid
-      const formattedData = response.data.map((row, index) => ({ ...row, id: index + 1 }));
+      const formattedData = userRequestData.map((row, index) => ({ ...row, id: index + 1 }));
       setData(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
 
   return (
     <Box m="20px">
       {/* Header component */}
-      <Header title="CUSTOMER PROJECTS" subtitle="Data of Customer's Projects" />
-      <Box m="40px 0 0 0" height="75vh" sx={{
+      <Header title="Requests" subtitle="Your Requests" />
+      <Box m="40px 0 0 0" height="35vh" sx={{
           "& .MuiDataGrid-root": {
             border: "none",
           },
@@ -69,7 +73,6 @@ const CustomerProjects = () => {
         <DataGrid
           rows={data} // Pass data to the DataGrid
           columns={columns} // Pass columns to the DataGrid
-          checkboxSelection
           getRowId={(row) => row.id} // Provide a function to get unique row IDs
         />
       </Box>
@@ -77,4 +80,4 @@ const CustomerProjects = () => {
   );
 };
 
-export default CustomerProjects;
+export default CustomerReq;

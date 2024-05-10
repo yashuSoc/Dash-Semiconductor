@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel, FormHelperText } from "@mui/material";
+import { TextField, Button, Typography, Select, MenuItem, FormControl, InputLabel,Stack,  FormHelperText } from "@mui/material";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from 'axios'; 
+import { useNavigate } from 'react-router-dom';
+
 
 const SignupPage = ({ onSignInClick, onHide }) => {
     const [email, setEmail] = useState('');
@@ -12,6 +14,8 @@ const SignupPage = ({ onSignInClick, onHide }) => {
     const [dropdownError, setDropdownError] = useState('');
     const [recaptchaValue, setRecaptchaValue] = useState(null); 
     const [submitted, setSubmitted] = useState(false);
+    const navigate = useNavigate();
+
   
     const handleRecaptchaChange = (value) => {
       setRecaptchaValue(value);
@@ -60,7 +64,9 @@ const SignupPage = ({ onSignInClick, onHide }) => {
         setDropdownError('');
       }
     };
-  
+    const redirectToSignIn = () => {
+      navigate('/signin'); // Redirect to sign-in page
+  };
     const handleSubmit = async (e) => {
       e.preventDefault();
       let formValid = true;
@@ -92,6 +98,26 @@ const SignupPage = ({ onSignInClick, onHide }) => {
             password: password,
             role: dropdownValue
           });
+          switch (dropdownValue) {
+            case 'Admin':
+                navigate('/');
+                break;
+            case 'Customer':
+                navigate('/customerDashboard');
+                break;
+            case 'IC Design Service Provider':
+                navigate('/icDesign/icboard');
+                break;
+            case 'Domain Leader':
+                navigate('/domainLeader/domainDashboard');
+                break;
+            case 'Engineer':
+                navigate('/engineerDashboard');
+                break;
+            default:
+                navigate('Invalid role:', dropdownValue);
+                break;
+        }
           console.log(response.data);
           setEmail('');
           setPassword('');
@@ -100,6 +126,8 @@ const SignupPage = ({ onSignInClick, onHide }) => {
           if (typeof onHide === 'function') {
             onHide(); // Call onHide function to hide the signup page or perform other actions
           }
+          sessionStorage.setItem('user_id', response.data.user_id);
+          sessionStorage.setItem('role_id', response.data.role_id);
           alert("Signup successful");
         } catch (error) {
           console.error('Error submitting form:', error);
@@ -109,9 +137,12 @@ const SignupPage = ({ onSignInClick, onHide }) => {
   
     return (
       <div style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div>
-          <Typography variant="h4" align="center" gutterBottom>
-            Sign Up
+        <div style={{ maxWidth: 400, textAlign: 'center' }}>
+        <Typography variant="h2" gutterBottom style={{ color: '#2196f3', animation: 'rainbow 2s infinite' }}>
+        Join the club of innovators! 
+          </Typography>
+          <Typography variant="h4" gutterBottom>
+          Sign Up now and unlock endless possibilities
           </Typography>
           {!submitted && (
           <form onSubmit={handleSubmit}>
@@ -136,6 +167,7 @@ const SignupPage = ({ onSignInClick, onHide }) => {
               helperText={passwordError}
               margin="normal"
             />
+            
             <FormControl variant="outlined" fullWidth error={!!dropdownError} margin="normal">
               <InputLabel id="dropdown-label">Choose an option</InputLabel>
               <Select
@@ -152,7 +184,7 @@ const SignupPage = ({ onSignInClick, onHide }) => {
                 <MenuItem value="Customer">Customer</MenuItem>
                 <MenuItem value="Engineer">Engineer</MenuItem>
                 <MenuItem value="Domain Leader">Domain Leader</MenuItem>
-                <MenuItem value="IC design service provider">IC design service provider</MenuItem>
+                <MenuItem value="IC design service provider">IC Design Service Provider</MenuItem>
               </Select>
               <FormHelperText>{dropdownError}</FormHelperText>
             </FormControl>
@@ -164,7 +196,7 @@ const SignupPage = ({ onSignInClick, onHide }) => {
             </div>
             <Button
               variant="contained"
-              color="primary"
+              color="info"
               fullWidth
               type="submit"
               style={{ marginTop: '10px' }}
@@ -173,11 +205,14 @@ const SignupPage = ({ onSignInClick, onHide }) => {
             </Button>
           </form>
           )}
-          <div style={{ marginTop: '10px' }}>
-            <Button onClick={onSignInClick} fullWidth>
-              Already have an account? Sign in
+          <div style={{ marginTop: '10px', color: 'white' }}>
+          <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} mt={2}>
+            <Button onClick={redirectToSignIn} fullWidth variant="text" color="info">
+              Don't have an account  ?..   Register Here 
             </Button>
-          </div>
+          </Stack>
+</div>
+
         </div>
       </div>
     );

@@ -77,7 +77,7 @@ const Engineerform = () => {
                   value={values.specialization}
                   name="specialization"
                 >
-                  <MenuItem value="DV">DV (Design Verifivation)</MenuItem>
+                  <MenuItem value="DV">DV (Design Verification)</MenuItem>
                   <MenuItem value="DFT">DFT (Design For Test)</MenuItem>
                   <MenuItem value="PD">PD (Physical Design)</MenuItem>
                 </Select>

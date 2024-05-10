@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { TextField, Button, Typography } from "@mui/material";
+import React, { useState} from 'react';
+import { TextField, Button, Typography, Stack } from "@mui/material";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom'; 
-
 const SigninPage = ({ onSignUpClick, onHide }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -13,6 +12,7 @@ const SigninPage = ({ onSignUpClick, onHide }) => {
     const [recaptchaValue, setRecaptchaValue] = useState(null); 
     const [submitted, setSubmitted] = useState(false);
     const navigate = useNavigate();
+    
   
     const handleRecaptchaChange = (value) => {
       setRecaptchaValue(value);
@@ -45,6 +45,12 @@ const SigninPage = ({ onSignUpClick, onHide }) => {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
+
+      if (!recaptchaValue) {
+        console.log('Please complete the ReCAPTCHA');
+        return;
+      }
+      
       if (!validateEmail(email)) {
         setEmailError('Please enter a valid email address');
         return;
@@ -63,23 +69,24 @@ const SigninPage = ({ onSignUpClick, onHide }) => {
         if (response.data.success) {
           console.log('Sign in successful');
           alert("signin successful");
-          const selectedOption = response.data.selected_option;
-          console.log(selectedOption);
-  
-          if (selectedOption === 'Admin') {
-            navigate('/admin-dashboard');
-          } else if (selectedOption === 'Customer') {
-            navigate('/customer-dashboard');
-          } else if (selectedOption === 'IC design service provider') {
-            navigate('/icdesign-dashboard');
-          }  else if (selectedOption === 'Engineer') {
-            navigate('/engineer-dashboard');
-          } else if (selectedOption === 'Domain Leader') {
-            navigate('/domainleader-dashboard');
+          const selectedOption = response.data.role_id;
+          sessionStorage.setItem('user_id', response.data.user_id);
+          sessionStorage.setItem('role_id', response.data.role_id);
+          sessionStorage.setItem('session_id', response.data.session_id);
+          if (selectedOption === 1) {
+            navigate('/');
+          } else if (selectedOption === 2) {
+            navigate('/customerDashboard/custboard');
+          } else if (selectedOption === 3) {
+            navigate('/icDesign/icboard');
+          }  else if (selectedOption === 5) {
+            navigate('/engineerDashboard');
+          } else if (selectedOption === 4) {
+            navigate('/domainLeader/domainDashboard');
           }
           
           setSubmitted(true);
-          onHide();
+          if (onHide) onHide(); 
         } else {
           setSignInError(response.data.message);
         }
@@ -93,20 +100,19 @@ const SigninPage = ({ onSignUpClick, onHide }) => {
         }
       }
     };
-  
-    const handleCaptchaSubmit = () => {
-      if (!recaptchaValue) {
-        console.log('Please complete the ReCAPTCHA');
-        return;
-      }
+    const handleSignUpButtonClick = () => {
+      // Navigate to sign-up page
+      navigate('/signup');
     };
-  
   
     return (
       <div style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div>
-          <Typography variant="h4" align="center" gutterBottom>
-            Sign In
+        <div style={{ maxWidth: 400, textAlign: 'center' }}>
+        <Typography variant="h2" gutterBottom style={{ color: '#2196f3', animation: 'rainbow 2s infinite' }}>
+            Welcome Back!
+          </Typography>
+          <Typography variant="h4" gutterBottom>
+            Sign in to your account to continue
           </Typography>
           {!submitted && (
             <form onSubmit={handleSubmit}>
@@ -138,7 +144,7 @@ const SigninPage = ({ onSignUpClick, onHide }) => {
               />
               <Button
                 variant="contained"
-                color="primary"
+                color="info"
                 fullWidth
                 type="submit"
                 style={{ marginTop: '10px' }}
@@ -147,9 +153,11 @@ const SigninPage = ({ onSignUpClick, onHide }) => {
               </Button>
             </form>
           )}
-          <Button onClick={onSignUpClick} fullWidth>
-            Sign Up
-          </Button>
+          <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} mt={2}>
+            <Button onClick={handleSignUpButtonClick} fullWidth variant="text" color="info">
+              Don't have an account  ?..   Register Here 
+            </Button>
+          </Stack>
         </div>
       </div>
     );

@@ -1,25 +1,27 @@
 import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
 import Header from "../../components/Header";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const Icclients = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]);
   const columns = [
-    { field: "cid", headerName: "Client ID" },
+    { field: "clientid", headerName: "Client ID" },
     {
-      field: "name",
+      field: "clientname",
       headerName: "Client Name",
-      type: "text",
+      type: "string",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "clients",
+      field: "clientdetails",
       headerName: "Client Details",
-      type: "text",
+      type: "string",
       headerAlign: "left",
       align: "left",
       flex: 1,
@@ -27,6 +29,20 @@ const Icclients = () => {
     },
 
   ];
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/icClients");
+      // Assuming the response data is an array of objects
+      // Assign unique IDs to each row for DataGrid
+      const formattedData = response.data.map((row, index) => ({ ...row, id: index + 1 }));
+      setData(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <Box m="20px">
@@ -61,7 +77,7 @@ const Icclients = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        <DataGrid checkboxSelection rows={data} columns={columns} getRowId={(row) => row.id}/>
       </Box>
     </Box>
   );

@@ -1,26 +1,43 @@
 import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataInvoices } from "../../data/mockData";
 import Header from "../../components/Header";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const Icprojects = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]); 
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "projectid", headerName: "ID" },
     {
-      field: "epname",
+      field: "projectname",
       headerName: "Project Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "epdetail",
+      field: "projectdetails",
       headerName: "Project Detail",
       flex: 1,
+      cellClassName: "name-column--cell",
     },
   ];
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/icProjects");
+      // Assuming the response data is an array of objects
+      // Assign unique IDs to each row for DataGrid
+      const formattedData = response.data.map((row, index) => ({ ...row, id: index + 1 }));
+      setData(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <Box m="20px">
@@ -54,7 +71,7 @@ const Icprojects = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} />
+        <DataGrid checkboxSelection rows={data} columns={columns} getRowId={(row) => row.id}/>
       </Box>
     </Box>
   );

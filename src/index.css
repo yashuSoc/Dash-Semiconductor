@@ -9,6 +9,16 @@ body,
   width: 100%;
   font-family: "Source Sans Pro", sans-serif;
 }
+@keyframes rainbow {
+  0% { color: #f44336; }
+  15% { color: #ff5722; } /* Orange Red */
+  30% { color: #ff9800; } /* Orange */
+  45% { color: #ffc107; } /* Yellow */
+  60% { color: #8bc34a; } /* Light Green */
+  75% { color: #4caf50; } /* Green */
+  90% { color: #2196f3; } /* Blue */
+  100% { color: #9c27b0; } /* Purple */
+}
 
 .app {
   display: flex;
