@@ -9,13 +9,13 @@ const CustomerReq = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
-
   // Define columns for the DataGrid
   const columns = [
     { field: "no_of_ic", headerName: "IC Designer" ,flex: 1, cellClassName: "name-column--cell" },
     { field: "no_of_dl", headerName: "Domain Leader", flex: 1, cellClassName: "name-column--cell"  },
     { field: "no_of_eng", headerName: "Engineers", flex: 1 , cellClassName: "name-column--cell"  },
-    { field: "file", headerName: "File", flex: 1 , cellClassName: "name-column--cell"  },
+    { field: "status", headerName: "Status", flex: 1 , cellClassName: "name-column--cell"  },
+
   ];
 
   // Fetch data from the API when the component mounts
@@ -29,10 +29,26 @@ const CustomerReq = () => {
       const userRequestData = response.data.userRequestData; // Access userRequestData array from the response
       
       // Assign unique IDs to each row for DataGrid
-      const formattedData = userRequestData.map((row, index) => ({ ...row, id: index + 1 }));
+      const formattedData = userRequestData.map((row, index) => ({
+        ...row,
+        id: index + 1,
+        status: getStatusLabel(row.requeststatus_id) // Get status label based on requeststatus_id
+      }));
       setData(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
+    }
+  };
+  const getStatusLabel = (requeststatus_id) => {
+    switch (requeststatus_id) {
+      case 0:
+        return "Inprogress";
+      case 1:
+        return "Approved";
+      case 2:
+        return "Rejected";
+      default:
+        return "Unknown";
     }
   };
   useEffect(() => {

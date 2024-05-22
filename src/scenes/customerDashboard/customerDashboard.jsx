@@ -20,9 +20,13 @@ const Customerprofile = () => {
     const fetchData = async () => {
       try {
         const session_id = sessionStorage.getItem('session_id');
+        const userId = sessionStorage.getItem('user_id'); 
         const response = await axios.get("http://localhost:3000/customerProfile",  { 
           headers: {
           'Authorization': session_id // Assuming session_id is your authorization token
+          },
+          params: { // Use params to send query parameters
+            user_id: userId,
           }
         });
        
@@ -66,7 +70,7 @@ const Customerprofile = () => {
       <Header title="Customer Profile" subtitle="Customer Details" />
       <Box
         m="40px 0 0 0"
-        height="75vh"
+        height="35vh"
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
@@ -96,7 +100,8 @@ const Customerprofile = () => {
         <DataGrid
           rows={customers}
           columns={columns}
-          getRowId={(row) => row.id} // Specify the unique identifier for each row
+          getRowId={(row) => row.id} 
+          autoHeight// Specify the unique identifier for each row
         />
         <CustomAlert
         open={notificationOpen}

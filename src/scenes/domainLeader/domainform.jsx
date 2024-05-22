@@ -69,6 +69,19 @@ const Domainform = () => {
               <TextField
                 fullWidth
                 variant="filled"
+                type="text"
+                label="Domain Leader Name"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.name}
+                name="name"
+                error={!!touched.name && !!errors.name}
+                helperText={touched.name && errors.name}
+                sx={{ gridColumn: "span 2" }}
+              />
+              <TextField
+                fullWidth
+                variant="filled"
                 type="number"
                 label="Total Experience (in Years)"
                 onBlur={handleBlur}
@@ -150,6 +163,7 @@ const checkoutSchema = yup.object().shape({
 });
 
 const initialValues = {
+  name:"",
   years: "",
   projects: "",
   tapeouts:"",

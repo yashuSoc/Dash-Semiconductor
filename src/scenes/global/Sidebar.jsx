@@ -8,7 +8,7 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined"; 
+import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
@@ -16,12 +16,12 @@ import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import AutoModeIcon from '@mui/icons-material/AutoMode';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import AddCardIcon from '@mui/icons-material/AddCard';
-import Person4Icon from '@mui/icons-material/Person4';
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import AutoModeIcon from "@mui/icons-material/AutoMode";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import AddCardIcon from "@mui/icons-material/AddCard";
+import Person4Icon from "@mui/icons-material/Person4";
 
 const DoubleNestedOption = ({ title, to, selected, setSelected, icon }) => {
   const theme = useTheme();
@@ -168,75 +168,86 @@ const Sidebar = () => {
             />
 
             <SubMenu title="Customer" icon={<PeopleOutlinedIcon />}>
-            <SubOption
-    title="Customer Profile"
-    to="/team"
-    icon={<Person4Icon/>}
-
-    selected={selected}
-    setSelected={setSelected}
-  />
-  <SubMenu title="Approvals" icon={<AddCardIcon />}>
-    <DoubleNestedOption
-      title="Approved"
-      to="/team/approved"
-      selected={selected}
-      setSelected={setSelected}
-      icon={<ThumbUpIcon />}
-    />
-    <DoubleNestedOption
-      title="InProgress"
-      to="/team/inprogress"
-      selected={selected}
-      setSelected={setSelected}
-      icon={<AutoModeIcon />}
-    />
-    <DoubleNestedOption
-      title="Rejected"
-      to="/team/rejected"
-      selected={selected}
-      setSelected={setSelected}
-      icon={<ThumbDownIcon />}
-    />
-  </SubMenu>
-  <SubOption
-    title="Customer Requests"
-    to="/team/requests"
-    icon={<AssignmentIndIcon/>}
-
-    selected={selected}
-    setSelected={setSelected}
-  />
-</SubMenu>
-
-            <SubMenu
-              title="IC Design Services"
-              icon={<ContactsOutlinedIcon />}
-            >
               <SubOption
-                title="Approval"
-                to="/icdesign/approval"
+                title="Customer Profile"
+                to="/team"
+                icon={<Person4Icon />}
                 selected={selected}
                 setSelected={setSelected}
               />
+              <SubMenu title="Approvals" icon={<AddCardIcon />}>
+                <DoubleNestedOption
+                  title="Approved"
+                  to="/team/approved"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<ThumbUpIcon />}
+                />
+                <DoubleNestedOption
+                  title="InProgress"
+                  to="/team/inprogress"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<AutoModeIcon />}
+                />
+                <DoubleNestedOption
+                  title="Rejected"
+                  to="/team/rejected"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<ThumbDownIcon />}
+                />
+              </SubMenu>
               <SubOption
-                title="In Progress"
-                to="/icdesign/inprogress"
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <SubOption
-                title="Profiles"
-                to="/icdesign/profiles"
+                title="Customer Requests"
+                to="/team/requests"
+                icon={<AssignmentIndIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
             </SubMenu>
 
-            <SubMenu
-              title="Domain Leader"
-              icon={<ReceiptOutlinedIcon />}
-            >
+            <SubMenu title="IC Design Services" icon={<ContactsOutlinedIcon />}>
+            <SubOption
+                title="IC Design Profile"
+                to="/team"
+                icon={<Person4Icon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <SubMenu title="Approvals" icon={<AddCardIcon />}>
+                <DoubleNestedOption
+                  title="Approved"
+                  to="/icdesign/approval"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<ThumbUpIcon />}
+                />
+                <DoubleNestedOption
+                  title="InProgress"
+                  to="/icdesign/inprogress"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<AutoModeIcon />}
+                />
+                <DoubleNestedOption
+                  title="Rejected"
+                  to="/icdesign/rejected"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<ThumbDownIcon />}
+                />
+              </SubMenu>
+              <SubOption
+                title="IC Design Requests"
+                to="/icdesign/requests"
+                icon={<AssignmentIndIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </SubMenu>
+
+            <SubMenu title="Domain Leader" icon={<ReceiptOutlinedIcon />}>
               <SubOption
                 title="Approval"
                 to="/domainleader/approval"
@@ -257,25 +268,41 @@ const Sidebar = () => {
               />
             </SubMenu>
 
-            <SubMenu
-              title="Engineers"
-              icon={<ReceiptOutlinedIcon />}
-            >
-              <SubOption
-                title="Approval"
-                to="/engineers/approval"
+            <SubMenu title="Engineers" icon={<ReceiptOutlinedIcon />}>
+            <SubOption
+                title="Engineer Profile"
+                to="/engineers"
+                icon={<Person4Icon />}
                 selected={selected}
                 setSelected={setSelected}
               />
+              <SubMenu title="Approvals" icon={<AddCardIcon />}>
+                <DoubleNestedOption
+                  title="Approved"
+                  to="/engineers/approval"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<ThumbUpIcon />}
+                />
+                <DoubleNestedOption
+                  title="InProgress"
+                  to="/engineers/inprogress"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<AutoModeIcon />}
+                />
+                <DoubleNestedOption
+                  title="Rejected"
+                  to="/engineers/rejected"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<ThumbDownIcon />}
+                />
+              </SubMenu>
               <SubOption
-                title="In Progress"
-                to="/engineers/inprogress"
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <SubOption
-                title="Profiles"
-                to="/engineers/profiles"
+                title="Engineer Requests"
+                to="/engieer/requests"
+                icon={<AssignmentIndIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
@@ -284,56 +311,56 @@ const Sidebar = () => {
               title="Pages"
               icon={<PersonOutlinedIcon />}
             > */}
-              <Item
-                title="Profile Form"
-                to="/form"
-                icon={<PersonOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Calendar"
-                to="/calendar"
-                icon={<CalendarTodayOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="FAQ Page"
-                to="/faq"
-                icon={<HelpOutlineOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
+            <Item
+              title="Profile Form"
+              to="/form"
+              icon={<PersonOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Calendar"
+              to="/calendar"
+              icon={<CalendarTodayOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="FAQ Page"
+              to="/faq"
+              icon={<HelpOutlineOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
             {/* </SubMenu> */}
-              <Item
-                title="Bar Chart"
-                to="/bar"
-                icon={<BarChartOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Pie Chart"
-                to="/pie"
-                icon={<PieChartOutlineOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Line Chart"
-                to="/line"
-                icon={<TimelineOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Geography Chart"
-                to="/geography"
-                icon={<MapOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
+            <Item
+              title="Bar Chart"
+              to="/bar"
+              icon={<BarChartOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Pie Chart"
+              to="/pie"
+              icon={<PieChartOutlineOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Line Chart"
+              to="/line"
+              icon={<TimelineOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Geography Chart"
+              to="/geography"
+              icon={<MapOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
           </Box>
         </Menu>
       </ProSidebar>

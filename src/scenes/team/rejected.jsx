@@ -1,22 +1,19 @@
-import { Box, useTheme } from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { Box, useTheme} from "@mui/material";
+import { DataGrid , GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import Header from "../../components/Header";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import Header from "../../components/Header";
 
-
-const Engineers = () => {
+const Customerrejected = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
-
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/adminEngineerProfile");
-      // Generate unique IDs for each row
-      const dataWithIds = response.data.map((row) => ({
-        id: row.user_id, // Use `user_id` as the `id` property for each row
+      const response = await axios.get("http://localhost:3000/adminRejected");
+      const dataWithIds = response.data.map((row, index) => ({
+        id: index + 1, // Assuming index starts from 0, you can adjust this if necessary
         ...row
       }));
       setData(dataWithIds);
@@ -25,55 +22,39 @@ const Engineers = () => {
       // Handle the error gracefully, e.g., show an error message to the user
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
   const columns = [
-    { field: "user_id", headerName: "Engineer ID" },
+    { field: "customerid", headerName: "ID" },
     {
-      field: "user_name",
-      headerName: "Name",
-      flex: 0.7,
+      field: "name",
+      headerName: "Company Name",
+      flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "specialization",
-      headerName: "Specialization",
+      field: "no_of_employees",
+      headerName: "No. of Employee",
       type: "number",
       headerAlign: "left",
       align: "left",
-      flex: 0.5,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      type: "email",
-      headerAlign: "left",
       flex: 1,
     },
     {
-      field: "project_name",
-      headerName: "Project Name ",
-      type: "string",
+      field: "location",
+      headerName:"Location",
       headerAlign: "left",
       align: "left",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "project_details",
-      headerName: "Project Details",
-      type: "string",
-      headerAlign: "left",
-      align: "left",
-      flex: 1,
-      cellClassName: "name-column--cell",
+      type:"string",
+      flex:1.5,
     },
   ];
 
   return (
     <Box m="20px">
-      <Header title="Engineer Profile" subtitle="List of Engineer Profiles" />
+      <Header title="Customer" subtitle="Managing the Customers"/> 
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -103,14 +84,10 @@ const Engineers = () => {
           },
         }}
       >
-        <DataGrid
-          rows={data}
-          columns={columns}
-          components={{ Toolbar: GridToolbar }}
-        />
+        <DataGrid  rows={data} columns={columns} components={{ Toolbar: GridToolbar }} getRowId={(row) => row.id}/>
       </Box>
     </Box>
   );
 };
 
-export default Engineers;
+export default Customerrejected;

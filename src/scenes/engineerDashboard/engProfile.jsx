@@ -12,26 +12,32 @@ const Engprofile = () => {
   const columns = [
     { field: "engineerid", headerName: "ID" },
     {
+      field: "name",
+      headerName: "Name",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
       field: "specialization",
       headerName: "Specialization",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "prefferedlocation",
+      field: "location",
       headerName: "Preferred Location",
       flex: 1,
       cellClassName: "name-column--cell",
     
     },
     {
-      field: "expinyears",
+      field: "expin_in_years",
       headerName: "Total Exp.(in years)",
       cellClassName: "name-column--cell",
       flex: 1,
     },
     {
-      field: "opentowork",
+      field: "open_to_work",
       headerName: "Open to Work",
       cellClassName: "name-column--cell",
       flex: 1,
@@ -42,9 +48,17 @@ const Engprofile = () => {
   }, []);
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/engineer");
-      // Assuming the response data is an array of objects
-      // Assign unique IDs to each row for DataGrid
+      const session_id = sessionStorage.getItem('session_id');
+        const userId = sessionStorage.getItem('user_id'); 
+      const response = await axios.get("http://localhost:3000/engineerProfile" , {
+        headers: {
+          'Authorization': session_id // Assuming session_id is your authorization token
+          },
+          params: { // Use params to send query parameters
+            user_id: userId,
+          }
+      });
+      
       const formattedData = response.data.map((row, index) => ({ ...row, id: index + 1 }));
       setData(formattedData);
     } catch (error) {
@@ -84,7 +98,7 @@ const Engprofile = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={data} columns={columns} getRowId={(row) => row.id} />
+        <DataGrid  rows={data} columns={columns} getRowId={(row) => row.id} />
       </Box>
     </Box>
   );

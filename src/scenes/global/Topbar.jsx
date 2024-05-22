@@ -10,6 +10,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Topbar = () => {
   const theme = useTheme();
@@ -21,10 +22,25 @@ const Topbar = () => {
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleLogout = () => {
-    // Perform logout actions here (e.g., clear local storage, etc.)
-    // Then navigate to the signin page
-    navigate('/signin');
+  const handleLogout = async() => {
+    // Get session ID from session storage
+    // const session_id = sessionStorage.getItem('session_id');
+    const user_id = sessionStorage.getItem('user_id')
+  
+    // Clear session storage
+    sessionStorage.clear();
+  
+    // Send request to logout endpoint to destroy user session
+    await axios.post('http://localhost:3000/logout', { user_id })
+      .then(response => {
+        // Redirect to the signin page
+        navigate('/signin');
+      })
+      .catch(error => {
+        console.error('Error logging out:', error);
+        // If there's an error, still redirect to the signin page
+        navigate('/signin');
+      });
   };
   const handleMenuClose = () => {
     setAnchorEl(null);

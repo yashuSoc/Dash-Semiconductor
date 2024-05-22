@@ -16,14 +16,17 @@ const Engineerform = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const handleFormSubmit = async (values) => {
-    const { specialization, years, pastprojects, owork, location } = values;
+    const { name, specialization, years, pastprojects, owork, location } = values;
     try {
+      const user_id = sessionStorage.getItem('user_id');
       await axios.post(`http://localhost:3000/engineerInprogress`, {
+        name, 
         specialization,
         years,
         pastprojects,
         owork,
         location,
+        user_id:user_id
       });
       setNotificationSeverity("success");
       setNotificationMessage("Engineer Registered");
@@ -68,6 +71,19 @@ const Engineerform = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Name"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.name}
+                name="name"
+                error={!!touched.name && !!errors.name}
+                helperText={touched.name && errors.name}
+                sx={{ gridColumn: "span 2" }}
+              />
               <FormControl fullWidth variant="filled" sx={{ gridColumn: "span 2" }}>
                 <InputLabel id="specialization-label">Specialization</InputLabel>
                 <Select

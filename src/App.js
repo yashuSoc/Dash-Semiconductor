@@ -50,6 +50,9 @@ import Customerrejected from "./scenes/team/rejected";
 import CustomerRequest from "./scenes/customerDashboard/customerRequest";
 import CustomerAdminProfile from "./scenes/team";
 import CustomerRequirements from "./scenes/team/requests";
+import Engineerprogress from "./scenes/engineers/inprogress";
+import EngineerApproved from "./scenes/engineers/approved";
+import EngineerRejected from "./scenes/engineers/rejected";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -114,6 +117,9 @@ function App() {
               <Route path="/team/approved" element={<Customerapproved />} />
               <Route path="/team/inprogress" element={<Customerprogress/>}/>
               <Route path="/team/rejected" element={<Customerrejected/>}/>
+              <Route path="/engineers/inprogress"  element={<Engineerprogress/>}/>
+              <Route path="/engineers/approval"  element={<EngineerApproved/>}/>
+              <Route path="/engineers/rejected"  element={<EngineerRejected/>}/>
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />
               <Route path="/engineers" element={<Engineers />}/>

@@ -1,23 +1,24 @@
 import { Box, useTheme } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import Header from "../../components/Header";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import Header from "../../components/Header";
 
-
-const Engineers = () => {
+const EngineerRejected = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
-
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/adminEngineerProfile");
+      const response = await axios.get(
+        "http://localhost:3000/EngineerRejectedProfile"
+      );
       // Generate unique IDs for each row
+
       const dataWithIds = response.data.map((row) => ({
-        id: row.user_id, // Use `user_id` as the `id` property for each row
-        ...row
+        id: row.engineerid, // Use `user_id` as the `id` property for each row
+        ...row,
       }));
       setData(dataWithIds);
     } catch (error) {
@@ -25,13 +26,14 @@ const Engineers = () => {
       // Handle the error gracefully, e.g., show an error message to the user
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
   const columns = [
-    { field: "user_id", headerName: "Engineer ID" },
+    { field: "engineerid", headerName: "Engineer ID" },
     {
-      field: "user_name",
+      field: "name",
       headerName: "Name",
       flex: 0.7,
       cellClassName: "name-column--cell",
@@ -52,28 +54,28 @@ const Engineers = () => {
       flex: 1,
     },
     {
-      field: "project_name",
-      headerName: "Project Name ",
-      type: "string",
-      headerAlign: "left",
-      align: "left",
+      field: "location",
+      headerName: "Preferred Location",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "project_details",
-      headerName: "Project Details",
-      type: "string",
-      headerAlign: "left",
-      align: "left",
-      flex: 1,
+      field: "expin_in_years",
+      headerName: "Total Exp.(in years)",
       cellClassName: "name-column--cell",
+      flex: 1,
+    },
+    {
+      field: "open_to_work",
+      headerName: "Open to Work",
+      cellClassName: "name-column--cell",
+      flex: 1,
     },
   ];
 
   return (
     <Box m="20px">
-      <Header title="Engineer Profile" subtitle="List of Engineer Profiles" />
+      <Header title="Customer" subtitle="Managing the Customers" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -104,6 +106,7 @@ const Engineers = () => {
         }}
       >
         <DataGrid
+          checkboxSelection
           rows={data}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
@@ -113,4 +116,4 @@ const Engineers = () => {
   );
 };
 
-export default Engineers;
+export default EngineerRejected;

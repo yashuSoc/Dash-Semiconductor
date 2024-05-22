@@ -2,12 +2,14 @@ const express = require('express');
 const pg = require('pg');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-// const multer = require('multer');
+const multer = require('multer');
+
 const session = require('express-session');
 const nodemailer = require('nodemailer');
 
 const port = 3000;
 const app = express();
+const upload = multer();
 app.use(cors());
 app.use(bodyParser.json())
 const crypto = require('crypto');
@@ -269,7 +271,7 @@ app.post('/signup', async (req, res) => {
       case 'Customer':
         role_id = 2;
         break;
-      case 'IC Design Service Provider':
+      case 'Ic Design':
         role_id = 3;
         break;
       case 'Domain Leader':
@@ -296,21 +298,30 @@ app.post('/signup', async (req, res) => {
     // Insert the new user into the database
     const insertUserQuery = {
       text: 'INSERT INTO "user" (email, password, role_id)  VALUES ($1, $2, $3) RETURNING user_id',
-      values: [email, password, role_id], // Placeholder for createuserid
+      values: [email, password, role_id],
     };
     const insertedUser = await db.query(insertUserQuery);
     const user_id = insertedUser.rows[0].user_id;
-    const roles_id = insertedUser.rows[0].role_id;
-    req.session.user_id = user_id;
-    req.session.role_id = roles_id;
-     // Update the createuserid with the user_id
-    const updateUserQuery = {
-      text: 'UPDATE "user" SET createuserid = $1 WHERE user_id = $2',
-      values: [user_id, user_id],
-    };
-    await db.query(updateUserQuery);
 
-    res.status(201).json({ success: true, user_id });
+    // Generate a session ID using crypto
+    const session_id = crypto.randomBytes(16).toString('hex');
+    const expirationTime = new Date();
+    expirationTime.setDate(expirationTime.getDate() + 1);
+
+    // Store user_id, role_id, and session_id in the user_session table
+    const insertSessionQuery = {
+      text: 'INSERT INTO user_sessions (user_id, role_id, session_id, expiration_time) VALUES ($1, $2, $3, $4)',
+      values: [user_id, role_id, session_id, expirationTime],
+    };
+    await db.query(insertSessionQuery);
+
+    // Store user_id and role_id in the session
+    req.session.user_id = user_id;
+    req.session.role_id = role_id;
+    req.session.session_id = session_id;
+    req.session.expiration_time = expirationTime;
+
+    res.status(201).json({ success: true, user_id, role_id, session_id });
   } catch (error) {
     console.error('Error signing up:', error);
     res.status(500).json({ success: false, message: 'An error occurred while signing up' });
@@ -318,16 +329,25 @@ app.post('/signup', async (req, res) => {
 });
 
 
+
 // Logout endpoint
-app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Error destroying session:', err);
-      res.status(500).json({ success: false, message: 'Error logging out' });
-    } else {
-      res.json({ success: true, message: 'Logged out successfully' });
-    }
-  });
+app.post('/logout', async (req, res) => {
+  const { user_id } = req.body;
+
+  try {
+    // Delete user session from the table
+    const deleteQuery = {
+      text: 'DELETE FROM user_sessions WHERE user_id = $1',
+      values: [user_id],
+    };
+    await db.query(deleteQuery);
+
+    // Respond with success message
+    res.json({ success: true, message: 'Logout successful' });
+  } catch (error) {
+    console.error('Error logging out:', error);
+    res.status(500).json({ success: false, message: 'An error occurred while logging out' });
+  }
 });
 
 // Protected endpoint
@@ -354,6 +374,7 @@ app.get('/protected', (req, res) => {
 //Customer Dashboard//
   app.get('/customerProfile',authenticateUser,  async (req, res) => {
     try {
+      const { user_id } = req.query;
         const query = `
     SELECT u.name AS user_name,
            u.location,
@@ -362,11 +383,11 @@ app.get('/protected', (req, res) => {
     FROM "user" u
     LEFT JOIN user_projects up ON u.user_id = up.user_id
     LEFT JOIN user_clients uc ON u.user_id = uc.user_id
-    WHERE u.user_status = 'approved';
+    WHERE u.user_id = $1 AND u.user_status = 'approved';
 `;
         
         // Execute the query
-        const result = await db.query(query);
+        const result = await db.query(query, [user_id]);
         
         // Send the result as JSON
         res.json(result.rows); 
@@ -438,18 +459,29 @@ app.get('/adminCustomerProfile', async (req, res) => {
 });
 
 
-app.post('/customerRequirements', async (req, res) => {
+app.post('/customerRequirements', upload.single('file'), async (req, res) => {
   try {
-    const {  user_id, dv, dft, pd ,info} = req.body;
+    const { user_id, dv, dft, pd, info } = req.body;
+    const fileData = req.file.buffer; // Access the file data from the request
 
-    const query = `
-      INSERT INTO "user_request" (user_id, changeuserid,  no_of_ic, no_of_dl, no_of_eng, add_information)
-      VALUES ($1, $1, $2, $3, $4, $5)
+    // Insert file into file table and get the file_id
+    const fileQuery = `
+      INSERT INTO "user_files" (file)
+      VALUES ($1)
+      RETURNING file_id;`;
+    
+    const fileResult = await db.query(fileQuery, [fileData]);
+    const fileId = fileResult.rows[0].file_id;
+
+    // Insert form data into user_request table with file_id reference
+    const userRequestQuery = `
+      INSERT INTO "user_request" (user_id, requeststatus_id, changeuserid,  no_of_ic, no_of_dl, no_of_eng, add_information, file_id)
+      VALUES ($1, 0, $1, $2, $3, $4, $5, $6)
       RETURNING *;`;
 
-    const values = [user_id, dv, dft, pd, info];
+    const userRequestValues = [user_id, dv, dft, pd, info, fileId];
 
-    const result = await db.query(query, values);
+    const userRequestResult = await db.query(userRequestQuery, userRequestValues);
 
     res.status(200).json({ message: 'Form data saved successfully!' });
   } catch (error) {
@@ -467,7 +499,7 @@ app.get('/customerReq', async (req, res) => {
       return res.status(400).json({ error: 'User ID is missing or invalid' });
     }
     const query = `
-      SELECT no_of_ic, no_of_dl, no_of_eng 
+      SELECT no_of_ic, no_of_dl, no_of_eng, requeststatus_id 
       FROM "user_request" WHERE user_id = $1
     `;
 
@@ -494,7 +526,7 @@ app.get('/getCustomerRequirements', async (req, res) => {
     const query = `
       SELECT  ur.user_id, u.name AS user_name, ur.no_of_ic, ur.no_of_dl, ur.no_of_eng 
       FROM "user_request" ur
-      JOIN "user" u ON ur.user_id = u.user_id
+      JOIN "user" u ON ur.user_id = u.user_id WHERE requeststatus_id = 0
     `;
 
     const result = await db.query(query);
@@ -560,11 +592,11 @@ app.post('/admincustomerApproved', async (req, res) => {
 });
 
 
-app.post('/admincustomerRejected', async (req, res) => {
+app.post('/customerRequestRejected', async (req, res) => {
   try {
     const { id } = req.body;
     // Update the status in the database for users with role_id = 2
-    await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 2', ["rejected", id]);
+    await db.query('UPDATE "user_request" SET requeststatus_id = $1 WHERE user_id = $2', [2, id]);
     res.sendStatus(200); // Send a success response
   } catch (error) {
     console.error('Error approving user:', error);
@@ -573,6 +605,240 @@ app.post('/admincustomerRejected', async (req, res) => {
 });
 
 
+app.post('/customerRequestApproved', async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    await db.query('UPDATE "user_request" SET requeststatus_id = $1 WHERE user_id = $2', [1, id]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+// IC Design Service Provider Firm
+app.post('/IcDesignInprogress', async (req, res) => {
+  try {
+    const { icname, iclocation, icemployees, icprojects, icclients, user_id, no_of_dv, no_of_dft, no_of_pd, detailsofdv, detailsofpd, detailsofdft } = req.body;
+
+    // Update query for the "user" table
+    const userQuery = `
+      UPDATE "user"
+      SET name = $1, location = $2, no_of_employees = $3, projects_delivered = $4, existing_clients = $5
+      WHERE user_id = $6
+      RETURNING *;`;
+
+    // Update query for the "icdesign_fields" table
+    const icdesignQuery = `
+      UPDATE "icdesign_fields"
+      SET no_of_dv = $1, no_of_dft = $2, no_of_pd = $3, detailsofdv = $4, detailsofpd = $5, detailsofdft = $6
+      WHERE user_id = $7
+      RETURNING *;`;
+
+    // Execute the update queries separately
+    const userValues = [icname, iclocation, icemployees, icprojects, icclients, user_id];
+    const icdesignValues = [no_of_dv, no_of_dft, no_of_pd, detailsofdv, detailsofpd, detailsofdft, user_id];
+
+    const userResult = await db.query(userQuery, userValues);
+    const icdesignResult = await db.query(icdesignQuery, icdesignValues);
+
+    res.status(200).json({ message: 'Form data saved successfully!' });
+  } catch (error) {
+    console.error('Error saving form data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Engineer Dashboard
+app.post('/engineerInprogress', async (req, res) => {
+  try {
+    const {name, location, years, specialization, owork, pastprojects, user_id} = req.body;
+
+    const query = `
+      UPDATE "user"
+      SET name=$1 , location = $2, expin_in_years = $3, specialization = $4, open_to_work = $5, projects_delivered = $6
+      WHERE user_id = $7
+      RETURNING *;`;
+    const values = [name, location, years, specialization, owork, pastprojects, user_id]; 
+
+      const result = await db.query(query, values);
+
+    res.status(200).json({ message: 'Form data saved successfully!' });
+  } catch (error) {
+    console.error('Error saving form data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.get('/engineerProfile', async (req, res) => {
+  try {
+    const { user_id } = req.query;
+    const query = `
+      SELECT user_id AS engineerid,
+             name,
+             location,
+             specialization,
+             expin_in_years,
+             open_to_work
+      FROM "user"
+      WHERE user_id = $1
+    `;
+    
+    // Execute the query
+    const result = await db.query(query, [user_id]);
+    
+    // Send the result as JSON
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+//ADMIN ENGINEER
+app.get('/adminEngineerProfile', async (req, res) => {
+  try {
+    const result = await db.query(`SELECT 
+    u.user_id,
+    u.name AS user_name,
+    u.specialization,
+    u.expin_in_years,
+    u.email,
+    up.project_name,
+    up.project_details
+  FROM "user" u
+  LEFT JOIN user_projects up ON u.user_id = up.user_id
+  WHERE u.user_status = 'approved' AND u.role_id = 5;`);
+  res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+//ADMIN ENGINEER INPROGRESS
+app.get('/adminEngineerInprogress', async (req, res) => {
+  try {
+    const result = await db.query('SELECT user_id AS engineerid, name, location, specialization, expin_in_years, open_to_work FROM "user" WHERE role_id=5 AND user_status = \'inprogress\'');
+    res.json(result.rows); 
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ADMIN ENGINEER APPROVED
+app.post('/adminEngineerApproved', async (req, res) => {
+  try {
+    const { id } = req.body;
+    // Update the status in the database for users with role_id = 2
+    await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 5', ["approved", id]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// ADMIN ENGINEER REJECTED
+app.post('/adminEngineerRejected', async (req, res) => {
+  try {
+    const { id } = req.body;
+    // Update the status in the database for users with role_id = 2
+    await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 5', ["rejected", id]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+//ADMIN ENGINEER APPROVED PROFILE
+app.get('/EngineerApprovedProfile', async (req, res) => {
+  try {
+    const result = await db.query('SELECT user_id as engineerid, name, email, location, specialization, expin_in_years, open_to_work FROM "user" WHERE role_id=5 AND user_status = \'approved\'');
+    res.json(result.rows); 
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// ADMIN ENGINEER REJECTED PROFILE
+app.get('/EngineerRejectedProfile', async (req, res) => {
+  try {
+    const result = await db.query('SELECT user_id as engineerid, name, email, location, specialization, expin_in_years, open_to_work FROM "user" WHERE role_id=5 AND user_status = \'rejected\'');
+    res.json(result.rows); 
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+// DOMAIN LEADER DASHBOARD
+app.post('/domainInprogress', async (req, res) => {
+  try {
+    const { years, tapeouts, projects, clients, user_id  } = req.body;
+
+    const query = `
+      UPDATE "user"
+      SET name = $1, location = $2, no_of_employees = $3, projects_delivered = $4, existing_clients = $5
+      WHERE user_id = $6
+      RETURNING *;`;
+    const values = [years, tapeouts, projects, clients, user_id]; 
+
+      const result = await db.query(query, values);
+
+    res.status(200).json({ message: 'Form data saved successfully!' });
+  } catch (error) {
+    console.error('Error saving form data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);

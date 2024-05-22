@@ -98,6 +98,11 @@ const SignupPage = ({ onSignInClick, onHide }) => {
             password: password,
             role: dropdownValue
           });
+          console.log(response.data);
+          if (response.data && response.data.role_id) {
+            sessionStorage.setItem('user_id', response.data.user_id);
+            sessionStorage.setItem('role_id', response.data.role_id);
+          }
           switch (dropdownValue) {
             case 'Admin':
                 navigate('/');
@@ -105,7 +110,7 @@ const SignupPage = ({ onSignInClick, onHide }) => {
             case 'Customer':
                 navigate('/customerDashboard');
                 break;
-            case 'IC Design Service Provider':
+            case 'Ic Design':
                 navigate('/icDesign/icboard');
                 break;
             case 'Domain Leader':
@@ -184,7 +189,7 @@ const SignupPage = ({ onSignInClick, onHide }) => {
                 <MenuItem value="Customer">Customer</MenuItem>
                 <MenuItem value="Engineer">Engineer</MenuItem>
                 <MenuItem value="Domain Leader">Domain Leader</MenuItem>
-                <MenuItem value="IC design service provider">IC Design Service Provider</MenuItem>
+                <MenuItem value="IC design service provider">Ic Design</MenuItem>
               </Select>
               <FormHelperText>{dropdownError}</FormHelperText>
             </FormControl>

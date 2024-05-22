@@ -1,6 +1,5 @@
-import React from "react";
-import { useState } from "react";
-import { Box, Button, TextField } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
@@ -8,7 +7,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
 import CustomAlert from "../../components/CustomAlert";
 import CustomerReq from "./custprojects";
-// import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const CustomerRequest = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -16,6 +14,7 @@ const CustomerRequest = () => {
   const [notificationSeverity, setNotificationSeverity] = useState("success");
   const [notificationMessage, setNotificationMessage] = useState("");
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [selectedFile, setSelectedFile] = useState(null); 
 
   const initialValues = {
     dv: "",
@@ -30,12 +29,17 @@ const CustomerRequest = () => {
     const { dv, dft, pd, info } = values;
     try {
       const user_id = sessionStorage.getItem('user_id');
-      await axios.post(`http://localhost:3000/customerRequirements`, {
-        dv,
-        dft,
-        pd,
-        info,
-        user_id: user_id,
+      const formData = new FormData();
+      formData.append("user_id", user_id);
+      formData.append("dv", dv);
+      formData.append("dft", dft);
+      formData.append("pd", pd);
+      formData.append("info", info);
+      formData.append("file", selectedFile); // Append the selected file to the form data
+      await axios.post(`http://localhost:3000/customerRequirements`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Set content type for form data
+        },
       });
       setNotificationSeverity("success");
       setNotificationMessage("Request Raised");
@@ -74,6 +78,7 @@ const CustomerRequest = () => {
           handleBlur,
           handleChange,
           handleSubmit,
+          setFieldValue,
         }) => (
           <form onSubmit={handleSubmit}>
             <Box
@@ -130,8 +135,8 @@ const CustomerRequest = () => {
 <TextField
                 fullWidth
                 variant="filled"
-                type="string"
-                label="Additonal Information"
+                type="text"
+                label="Additional Information"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.info}
@@ -141,39 +146,43 @@ const CustomerRequest = () => {
                 sx={{ gridColumn: "span 2" }}
                 required
               />
-
-              {/* <label htmlFor="file-upload">
+              <input
+                id="file-upload"
+                type="file"
+                style={{ display: 'none' }}
+                required
+                onChange={(event) => {
+                  setSelectedFile(event.target.files[0]);
+                  setFieldValue("fileName", event.target.files[0].name); // Set the filename in the form field
+                }}
+              />
+              <label htmlFor="file-upload">
                 <Button
                   variant="outlined"
                   component="span"
                   color="secondary"
-                  startIcon={<CloudUploadIcon />}
                 >
                   Upload File
                 </Button>
-                {values.info && (
-                  <div>
-                    <Typography variant="body1">{values.info.name}</Typography>
-                    <Button
-                      variant="text"
-                      component="span"
-                      color="warning"
-                      onClick={() => {
-                        handleChange({
-                          target: {
-                            name: "info",
-                            value: null,
-                          },
-                        });
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                )}
-              </label> */}
-              
+              </label>
+              {values.fileName && (
+                <div>
+                  <Typography variant="body1">{values.fileName}</Typography>
+                  <Button
+                    variant="text"
+                    color="warning"
+                    onClick={() => {
+                      setSelectedFile(null);
+                      setFieldValue("fileName", ""); // Clear the filename in the form field
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
             </Box>
+
+            
             <Box display="flex" justifyContent="end" mt="20px">
               <Button
                 type="submit"
@@ -189,7 +198,6 @@ const CustomerRequest = () => {
       </Formik>
       <CustomerReq/>
 
-      {/* Custom alert component */}
       <CustomAlert
         open={notificationOpen}
         onClose={handleNotificationClose}
