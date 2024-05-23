@@ -1,26 +1,17 @@
-import { Box, useTheme } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, useTheme} from "@mui/material";
+import { DataGrid , GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import Header from "../../components/Header";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Header from "../../components/Header";
 
-const Domainprofile = () => {
+const DomainRejected = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
   const fetchData = async () => {
     try {
-      const session_id = sessionStorage.getItem('session_id');
-      const userId = sessionStorage.getItem('user_id'); 
-      const response = await axios.get("http://localhost:3000/domainProfile", { 
-        headers: {
-        'Authorization': session_id // Assuming session_id is your authorization token
-        },
-        params: { // Use params to send query parameters
-          user_id: userId,
-        }
-      });
+      const response = await axios.get("http://localhost:3000/adminRejected");
       const dataWithIds = response.data.map((row, index) => ({
         id: index + 1, // Assuming index starts from 0, you can adjust this if necessary
         ...row
@@ -36,58 +27,34 @@ const Domainprofile = () => {
     fetchData();
   }, []);
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "customerid", headerName: "ID" },
     {
-      field: "headin",
-      headerName: "Head",
-      type: "text",
+      field: "name",
+      headerName: "Company Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-        field: "no_of_tapeouts_handled",
-        headerName: "No. of Tapeouts Handled",
-        type: "number",
-        headerAlign: "left",
-        align: "left",
-        flex: 1,
-        cellClassName: "name-column--cell",
-      },
-    
-    {
-      field: "expin_in_years",
-      headerName: "Years of Exp.",
+      field: "no_of_employees",
+      headerName: "No. of Employee",
       type: "number",
       headerAlign: "left",
       align: "left",
       flex: 1,
-      cellClassName: "name-column--cell",
     },
     {
-      field: "projects_delivered",
-      headerName: "Projects",
-      type: "number",
+      field: "location",
+      headerName:"Location",
       headerAlign: "left",
       align: "left",
-      flex: 1,
-      cellClassName: "name-column--cell",
+      type:"string",
+      flex:1.5,
     },
-    {
-      field: "existing_clients",
-      headerName: "Clients Served",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-
   ];
 
   return (
     <Box m="20px">
-      <Header title="DOMAIN LEADER PROFILE" subtitle="Managing The Domain Leaders Profile" />
-      {/* <Customerbar/> */}
+      <Header title="Customer" subtitle="Managing the Customers"/> 
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -117,10 +84,10 @@ const Domainprofile = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={data} columns={columns} getRowId={(row) => row.id} autoHeight/>
+        <DataGrid  rows={data} columns={columns} components={{ Toolbar: GridToolbar }} getRowId={(row) => row.id}/>
       </Box>
     </Box>
   );
 };
 
-export default Domainprofile;
+export default DomainRejected;

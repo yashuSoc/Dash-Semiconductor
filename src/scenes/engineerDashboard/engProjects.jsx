@@ -10,15 +10,15 @@ const Engprojects = () => {
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "projectid", headerName: "ID" },
     {
-      field: "projectname",
+      field: "project_name",
       headerName: "Project Name",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "projectdetails",
+      field: "project_details",
       headerName: "Project Detail",
       flex: 1,
       cellClassName: "name-column--cell",
@@ -31,7 +31,16 @@ const Engprojects = () => {
   // Function to fetch data from the API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/engineerProjects");
+      const session_id = sessionStorage.getItem('session_id');
+      const userId = sessionStorage.getItem('user_id');
+      const response = await axios.get("http://localhost:3000/engineerProjects" , {
+        headers: {
+          'Authorization': session_id // Assuming session_id is your authorization token
+          },
+          params: { // Use params to send query parameters
+            user_id: userId,
+          }
+      });
       // Assuming the response data is an array of objects
       // Assign unique IDs to each row for DataGrid
       const formattedData = response.data.map((row, index) => ({ ...row, id: index + 1 }));
@@ -73,7 +82,7 @@ const Engprojects = () => {
         }}
         
       >
-        <DataGrid checkboxSelection rows={data} columns={columns} getRowId={(row) => row.id}/>
+        <DataGrid  rows={data} columns={columns} getRowId={(row) => row.id}/>
       </Box>
     </Box>
   );

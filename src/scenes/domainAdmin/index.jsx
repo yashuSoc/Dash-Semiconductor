@@ -5,24 +5,15 @@ import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import axios from "axios";
 
-const Domainprofile = () => {
+const DomainAdminProfile = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
   const fetchData = async () => {
     try {
-      const session_id = sessionStorage.getItem('session_id');
-      const userId = sessionStorage.getItem('user_id'); 
-      const response = await axios.get("http://localhost:3000/domainProfile", { 
-        headers: {
-        'Authorization': session_id // Assuming session_id is your authorization token
-        },
-        params: { // Use params to send query parameters
-          user_id: userId,
-        }
-      });
+      const response = await axios.get("http://localhost:3000/adminDomainProfile");
       const dataWithIds = response.data.map((row, index) => ({
-        id: index + 1, // Assuming index starts from 0, you can adjust this if necessary
+        id: row.domainid + 1, // Assuming index starts from 0, you can adjust this if necessary
         ...row
       }));
       setData(dataWithIds);
@@ -36,7 +27,14 @@ const Domainprofile = () => {
     fetchData();
   }, []);
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "domainid", headerName: "ID" },
+    {
+        field: "name",
+        headerName: "Domain Leader Name",
+        type: "text",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
     {
       field: "headin",
       headerName: "Head",
@@ -117,10 +115,10 @@ const Domainprofile = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={data} columns={columns} getRowId={(row) => row.id} autoHeight/>
+        <DataGrid rows={data} columns={columns} getRowId={(row) => row.id} autoHeight/>
       </Box>
     </Box>
   );
 };
 
-export default Domainprofile;
+export default DomainAdminProfile;

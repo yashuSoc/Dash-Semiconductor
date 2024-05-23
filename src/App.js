@@ -32,8 +32,6 @@ import Icboard from "./scenes/icDesign/icboard";
 import Iccalendar from "./scenes/icDesign/icCalendar";
 import Icform from "./scenes/icDesign/icForm";
 import Icprofile from "./scenes/icDesign/icdesign";
-import Customerclients from "./scenes/customerDashboard/custClients";
-import Customerprojects from "./scenes/customerDashboard/custprojects";
 import Domaincalendar from "./scenes/domainLeader/domaincalendar";
 import Domainbar from "./scenes/global/Domainbar";
 import Domainboard from "./scenes/domainLeader/domainDashboard";
@@ -53,6 +51,9 @@ import CustomerRequirements from "./scenes/team/requests";
 import Engineerprogress from "./scenes/engineers/inprogress";
 import EngineerApproved from "./scenes/engineers/approved";
 import EngineerRejected from "./scenes/engineers/rejected";
+import DomainAdminProfile from "./scenes/domainAdmin";
+import Domainprogress from "./scenes/domainAdmin/inprogress";
+import DomainApproved from "./scenes/domainAdmin/approved";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -85,44 +86,68 @@ function App() {
           <main className="content">
           {!isAuthPage && <Topbar setIsSidebar={setIsSidebar} />}
             <Routes>
+              {/* ........Domain Dashboard Routes....... */}
             <Route path="/domainLeader/domainDashboard" element={<Domainboard/>}/>
               <Route path="/domainLeader/domainleader" element={<Domainprofile/>}/>
               <Route path="/domainLeader/domainproject" element={<Domainprojects/>}/>
               <Route path="/domainLeader/domaincalendar" element={<Domaincalendar/>}/>
               <Route path="/domainLeader/domainclients" element={<Domainclients/>}/>
               <Route path="/domainLeader/domainform" element={<Domainform/>}/>
+
+
+              {/*.........Customer Dashboard Routes...... */}
               <Route path="/customerDashboard" element={<Customerprofile/>}/>
               <Route path="/customerDashboard/customerRequest" element={<CustomerRequest/>}/>
-              <Route path="/customerDashboard/Clients" element={<Customerclients/>}/>
-              <Route path="/customerDashboard/Projects" element={<Customerprojects/>}/>
               <Route path="/customerDashboard/customerform" element={<Customerform/>}/>
               <Route path="/customerDashboard/custboard" element={<Customerboard/>}/>
               <Route path="/customerDashboard/customerCalender" element={<Customercalendar/>}/>
+
+              {/*.........Engineer Dashboard Routes...... */}
               <Route path="/engineerDashboard" element={<Engineerboard/>}/>
               <Route path="/engineerDashboard/Form" element={<Engineerform/>}/>
               <Route path="/engineerDashboard/Profile" element={<Engprofile/>}/>
               <Route path="/engineerDashboard/calendar" element={<Engineercalendar/>}/>
               <Route path="/engineerDashboard/Projects" element={<Engprojects/>}/>
+
+              {/* ........IC Design Dashboard Routes..... */}
               <Route path="/icDesign/icboard" element={<Icboard/>}/>
               <Route path="/icDesign/icdesign" element={<Icprofile/>}/>
               <Route path="/icDesign/icClients" element={<Icclients/>}/>
               <Route path="/icDesign/icProjects" element={<Icprojects/>}/>
               <Route path="/icDesign/icForm" element={<Icform/>}/>
               <Route path="/icDesign/icCalendar" element={<Iccalendar/>}/>
+
+              {/* ........Sign-Up..... */}
               <Route path="/signup" element={<SignupPage />} />
+
+              {/* ........Sign-In..... */}
               <Route path="/signin" element={<SigninPage/>}/>
+
+              {/* ........Admin Routes...... */}
               <Route path="/" element={<Dashboard />} />
               <Route path="/team/requests" element={<CustomerRequirements />} />
               <Route path="/team" element={<CustomerAdminProfile />} />
               <Route path="/team/approved" element={<Customerapproved />} />
               <Route path="/team/inprogress" element={<Customerprogress/>}/>
               <Route path="/team/rejected" element={<Customerrejected/>}/>
+
+
+              <Route path="/engineers" element={<Engineers />}/>
               <Route path="/engineers/inprogress"  element={<Engineerprogress/>}/>
               <Route path="/engineers/approval"  element={<EngineerApproved/>}/>
               <Route path="/engineers/rejected"  element={<EngineerRejected/>}/>
+
+
+              <Route path="/domain" element={<DomainAdminProfile />}/>
+              <Route path="/domain/inprogress" element={<Domainprogress />}/>
+              <Route path="/domain/approved" element={<DomainApproved />}/>
+
+
+
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />
-              <Route path="/engineers" element={<Engineers />}/>
+              
+
               <Route path="/form" element={<Form />} />
               <Route path="/bar" element={<Bar />} />
               <Route path="/pie" element={<Pie />} />

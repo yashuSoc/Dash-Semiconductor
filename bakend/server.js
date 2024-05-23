@@ -450,7 +450,7 @@ app.get('/adminCustomerProfile', async (req, res) => {
   FROM "user" u
   LEFT JOIN user_projects up ON u.user_id = up.user_id
   LEFT JOIN user_clients uc ON u.user_id = uc.user_id
-  WHERE u.user_status = 'approved';`);
+  WHERE u.user_status = 'approved' AND u.role_id = 2;`);
   res.json(result.rows);
   } catch (error) {
     console.error('Error executing query', error);
@@ -592,6 +592,19 @@ app.post('/admincustomerApproved', async (req, res) => {
 });
 
 
+app.post('/admincustomerRejected', async (req, res) => {
+  try {
+    const { id } = req.body;
+    // Update the status in the database for users with role_id = 2
+    await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 2', ["rejected", id]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 app.post('/customerRequestRejected', async (req, res) => {
   try {
     const { id } = req.body;
@@ -674,7 +687,7 @@ app.post('/IcDesignInprogress', async (req, res) => {
 
 
 
-// Engineer Dashboard
+// ENGINEER DASHBOARD
 app.post('/engineerInprogress', async (req, res) => {
   try {
     const {name, location, years, specialization, owork, pastprojects, user_id} = req.body;
@@ -695,7 +708,7 @@ app.post('/engineerInprogress', async (req, res) => {
   }
 });
 
-
+// ENGINEER PROFILE
 app.get('/engineerProfile', async (req, res) => {
   try {
     const { user_id } = req.query;
@@ -707,6 +720,30 @@ app.get('/engineerProfile', async (req, res) => {
              expin_in_years,
              open_to_work
       FROM "user"
+      WHERE user_id = $1 AND role_id = 5
+    `;
+    
+    // Execute the query
+    const result = await db.query(query, [user_id]);
+    
+    // Send the result as JSON
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// ENGINEER PROJECTS
+app.get('/engineerProjects', async (req, res) => {
+  try {
+    const { user_id } = req.query;
+    const query = `
+      SELECT user_id AS projectid,
+             project_name,
+             project_details
+      FROM "user_projects"
       WHERE user_id = $1
     `;
     
@@ -720,6 +757,7 @@ app.get('/engineerProfile', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 
@@ -822,14 +860,14 @@ app.get('/EngineerRejectedProfile', async (req, res) => {
 // DOMAIN LEADER DASHBOARD
 app.post('/domainInprogress', async (req, res) => {
   try {
-    const { years, tapeouts, projects, clients, user_id  } = req.body;
+    const { names, years, tapeouts, projects, clients, user_id  } = req.body;
 
     const query = `
       UPDATE "user"
-      SET name = $1, location = $2, no_of_employees = $3, projects_delivered = $4, existing_clients = $5
-      WHERE user_id = $6
+      SET name = $1, expin_in_years = $2, no_of_tapeouts_handled = $3, projects_delivered = $4, existing_clients = $5
+      WHERE user_id = $6 AND role_id = 4
       RETURNING *;`;
-    const values = [years, tapeouts, projects, clients, user_id]; 
+    const values = [names, years, tapeouts, projects, clients, user_id]; 
 
       const result = await db.query(query, values);
 
@@ -839,6 +877,136 @@ app.post('/domainInprogress', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+// DOMAIN DASHBOARD PROFILE
+app.get('/domainProfile',authenticateUser,  async (req, res) => {
+  try {
+    const { user_id } = req.query;
+    const query = `
+    SELECT user_id AS domainid,
+    expin_in_years,
+    no_of_tapeouts_handled,
+    projects_delivered,
+    existing_clients
+FROM "user"
+WHERE user_id = $1 AND role_id = 4
+`;
+      
+      // Execute the query
+      const result = await db.query(query, [user_id]);
+      
+      // Send the result as JSON
+      res.json(result.rows); 
+  } catch (error) {
+      console.error('Error executing query', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// DOMAIN ADMIN PROFILE
+app.get('/adminDomainProfile', async (req, res) => {
+  try {
+    const result = await db.query(`SELECT 
+    user_id AS domainid,
+    name,
+    expin_in_years,
+    no_of_tapeouts_handled,
+    projects_delivered,
+    existing_clients
+FROM "user"
+WHERE role_id = 4 AND user_status = 'approved'
+    ;`);
+  res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// DOMAIN ADMIN INPROGRESS
+app.get('/adminDomainInprogress', async (req, res) => {
+  try {
+    const result = await db.query(`SELECT 
+    user_id AS domainid,
+    name,
+    expin_in_years,
+    no_of_tapeouts_handled,
+    projects_delivered,
+    existing_clients
+FROM "user"
+WHERE role_id = 4 AND user_status = 'inprogress'
+    ;`);
+  res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// DOMAIN ADMIN APPROVAL REQUEST
+app.post('/adminDomainApproved', async (req, res) => {
+  try {
+    const { id } = req.body;
+    // Update the status in the database for users with role_id = 2
+    await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 4', ["approved", id]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// DOMAIN ADMIN REJECTION REQUEST
+app.post('/adminDomainRejected', async (req, res) => {
+  try {
+    const { id } = req.body;
+    // Update the status in the database for users with role_id = 2
+    await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 4', ["rejected", id]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+// USER
+app.get('/user/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params; // Destructure userId from req.params
+    const query = `
+      SELECT name
+      FROM "user"
+      WHERE user_id = $1
+    `;
+    
+    // Execute the query
+    const result = await db.query(query, [userId]); // Pass userId to the query
+    
+    // Check if user is found
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Send the result as JSON
+    res.json(result.rows[0]); // Return the first row (assuming user_id is unique)
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);

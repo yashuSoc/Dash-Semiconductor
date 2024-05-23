@@ -1,49 +1,44 @@
 import { Box, useTheme } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid , GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import Header from "../../components/Header";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Header from "../../components/Header";
 
-const Domainprofile = () => {
+const DomainApproved = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
   const fetchData = async () => {
     try {
-      const session_id = sessionStorage.getItem('session_id');
-      const userId = sessionStorage.getItem('user_id'); 
-      const response = await axios.get("http://localhost:3000/domainProfile", { 
-        headers: {
-        'Authorization': session_id // Assuming session_id is your authorization token
-        },
-        params: { // Use params to send query parameters
-          user_id: userId,
-        }
-      });
-      const dataWithIds = response.data.map((row, index) => ({
-        id: index + 1, // Assuming index starts from 0, you can adjust this if necessary
+      const response = await axios.get("http://localhost:3000/adminDomainProfile");
+      // Generate unique IDs for each row
+      console.log(response.data)
+      const dataWithIds = response.data.map((row) => ({
+        id: row.domainid, // Use `user_id` as the `id` property for each row
         ...row
       }));
+      console.log("Data with IDs:", dataWithIds);
       setData(dataWithIds);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle the error gracefully, e.g., show an error message to the user
     }
   };
+  
 
   useEffect(() => {
     fetchData();
   }, []);
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "domainid", headerName: "ID" },
     {
-      field: "headin",
-      headerName: "Head",
-      type: "text",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
+        field: "name",
+        headerName: "Domain Leader Name",
+        type: "text",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
     {
         field: "no_of_tapeouts_handled",
         headerName: "No. of Tapeouts Handled",
@@ -63,31 +58,12 @@ const Domainprofile = () => {
       flex: 1,
       cellClassName: "name-column--cell",
     },
-    {
-      field: "projects_delivered",
-      headerName: "Projects",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "existing_clients",
-      headerName: "Clients Served",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-
+    
   ];
 
   return (
     <Box m="20px">
-      <Header title="DOMAIN LEADER PROFILE" subtitle="Managing The Domain Leaders Profile" />
-      {/* <Customerbar/> */}
+      <Header title="Customer" subtitle="Managing the Customers"/> 
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -117,10 +93,10 @@ const Domainprofile = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={data} columns={columns} getRowId={(row) => row.id} autoHeight/>
+        <DataGrid  rows={data} columns={columns} components={{ Toolbar: GridToolbar }}/>
       </Box>
     </Box>
   );
 };
 
-export default Domainprofile;
+export default DomainApproved;

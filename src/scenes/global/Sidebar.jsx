@@ -134,13 +134,15 @@ const Sidebar = () => {
           {!isCollapsed && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
-                <img
-                  alt="profile-user"
-                  width="100px"
-                  height="100px"
-                  src={`../../assets/user.png`}
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
+              <Link to="/">
+                  <img
+                    alt="profile-user"
+                    width="100px"
+                    height="100px"
+                    src={`../../assets/user.png`}
+                    style={{ cursor: "pointer", borderRadius: "50%" }}
+                  />
+                </Link>
               </Box>
               <Box textAlign="center">
                 <Typography
@@ -248,24 +250,37 @@ const Sidebar = () => {
             </SubMenu>
 
             <SubMenu title="Domain Leader" icon={<ReceiptOutlinedIcon />}>
-              <SubOption
-                title="Approval"
-                to="/domainleader/approval"
+            <SubOption
+                title="Domain Leader Profile"
+                to="/domain"
+                icon={<Person4Icon />}
                 selected={selected}
                 setSelected={setSelected}
               />
-              <SubOption
-                title="In Progress"
-                to="/domainleader/inprogress"
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <SubOption
-                title="Profiles"
-                to="/domainleader/profiles"
-                selected={selected}
-                setSelected={setSelected}
-              />
+              <SubMenu title="Approvals" icon={<AddCardIcon />}>
+                <DoubleNestedOption
+                  title="Approved"
+                  to="/domain/approved"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<ThumbUpIcon />}
+                />
+                <DoubleNestedOption
+                  title="InProgress"
+                  to="/domain/inprogress"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<AutoModeIcon />}
+                />
+                <DoubleNestedOption
+                  title="Rejected"
+                  to="/domain/rejected"
+                  selected={selected}
+                  setSelected={setSelected}
+                  icon={<ThumbDownIcon />}
+                />
+              </SubMenu>
+              
             </SubMenu>
 
             <SubMenu title="Engineers" icon={<ReceiptOutlinedIcon />}>

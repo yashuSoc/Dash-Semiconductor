@@ -16,13 +16,16 @@ const Domainform = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
 
   const handleFormSubmit = async (values) => {
-    const { years, tapeouts, projects, clients } = values;
+    const { names, years, tapeouts, projects, clients } = values;
     try {
+      const user_id = sessionStorage.getItem('user_id');
       await axios.post(`http://localhost:3000/domainInprogress`, {
+        names, 
         years,
         tapeouts,
         projects,
         clients,
+        user_id: user_id,
       });
       setNotificationSeverity("success");
       setNotificationMessage("Domain Leader Registered");
@@ -34,12 +37,14 @@ const Domainform = () => {
     }
     setNotificationOpen(true);
   };
+
   const handleNotificationClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setNotificationOpen(false);
   };
+
   return (
     <Box m="20px">
       <Header title="Register Domain Leader" subtitle="Create a New Domain Leader" />
@@ -73,10 +78,10 @@ const Domainform = () => {
                 label="Domain Leader Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.name}
-                name="name"
-                error={!!touched.name && !!errors.name}
-                helperText={touched.name && errors.name}
+                value={values.names}
+                name="names"
+                error={!!touched.names && !!errors.names}
+                helperText={touched.names && errors.names}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -96,7 +101,7 @@ const Domainform = () => {
                 fullWidth
                 variant="filled"
                 type="number"
-                label="Number of Tapeouts Handeled"
+                label="Number of Tapeouts Handled"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.tapeouts}
@@ -131,9 +136,6 @@ const Domainform = () => {
                 helperText={touched.clients && errors.clients}
                 sx={{ gridColumn: "span 2" }}
               />
-
-              
-              
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button type="submit" color="secondary" variant="contained" disabled={submitted}>
@@ -153,21 +155,20 @@ const Domainform = () => {
   );
 };
 
-
 const checkoutSchema = yup.object().shape({
-  years: yup.number().required("Required"),
+  names: yup.string().required("Required"),
+  years: yup.number().required("Required").positive("Must be positive").integer("Must be an integer"),
+  tapeouts: yup.number().required("Required").positive("Must be positive").integer("Must be an integer"),
   projects: yup.string().required("Required"),
-  tapeouts: yup.string().required("Required"),
-  clients:yup.string().required("Required"),
-
+  clients: yup.number().required("Required").positive("Must be positive").integer("Must be an integer"),
 });
 
 const initialValues = {
-  name:"",
+  names: "",
   years: "",
+  tapeouts: "",
   projects: "",
-  tapeouts:"",
-  clients:"",
+  clients: "",
 };
 
 export default Domainform;

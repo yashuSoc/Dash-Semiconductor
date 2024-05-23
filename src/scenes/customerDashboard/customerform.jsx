@@ -35,7 +35,6 @@ const CustomerForm = () => {
     try {
       // Fetch user ID from session
       const user_id = sessionStorage.getItem('user_id');
-      console.log(user_id);
       
       // Send request with user ID
       await axios.post(`http://localhost:3000/customersInprogress`, {
