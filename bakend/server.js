@@ -946,6 +946,25 @@ WHERE role_id = 4 AND user_status = 'inprogress'
 });
 
 
+// DOMAIN ADMIN REJECTED
+app.get('/domainRejected', async (req, res) => {
+  try {
+    const result = await db.query(`SELECT 
+    user_id AS domainid,
+    name,
+    expin_in_years,
+    no_of_tapeouts_handled
+FROM "user"
+WHERE role_id = 4 AND user_status = 'rejected'
+    ;`);
+  res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 // DOMAIN ADMIN APPROVAL REQUEST
 app.post('/adminDomainApproved', async (req, res) => {
   try {

@@ -54,6 +54,7 @@ import EngineerRejected from "./scenes/engineers/rejected";
 import DomainAdminProfile from "./scenes/domainAdmin";
 import Domainprogress from "./scenes/domainAdmin/inprogress";
 import DomainApproved from "./scenes/domainAdmin/approved";
+import DomainRejected from "./scenes/domainAdmin/rejected";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -91,7 +92,6 @@ function App() {
               <Route path="/domainLeader/domainleader" element={<Domainprofile/>}/>
               <Route path="/domainLeader/domainproject" element={<Domainprojects/>}/>
               <Route path="/domainLeader/domaincalendar" element={<Domaincalendar/>}/>
-              <Route path="/domainLeader/domainclients" element={<Domainclients/>}/>
               <Route path="/domainLeader/domainform" element={<Domainform/>}/>
 
 
@@ -141,6 +141,7 @@ function App() {
               <Route path="/domain" element={<DomainAdminProfile />}/>
               <Route path="/domain/inprogress" element={<Domainprogress />}/>
               <Route path="/domain/approved" element={<DomainApproved />}/>
+              <Route path="/domain/rejected" element={<DomainRejected />}/>
 
 
 

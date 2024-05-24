@@ -11,7 +11,7 @@ const DomainRejected = () => {
   const [data, setData] = useState([]);
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/adminRejected");
+      const response = await axios.get("http://localhost:3000/domainRejected");
       const dataWithIds = response.data.map((row, index) => ({
         id: index + 1, // Assuming index starts from 0, you can adjust this if necessary
         ...row
@@ -27,28 +27,32 @@ const DomainRejected = () => {
     fetchData();
   }, []);
   const columns = [
-    { field: "customerid", headerName: "ID" },
+    { field: "domainid", headerName: "ID" },
     {
-      field: "name",
-      headerName: "Company Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
+        field: "name",
+        headerName: "Domain Leader Name",
+        type: "text",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
     {
-      field: "no_of_employees",
-      headerName: "No. of Employee",
+        field: "no_of_tapeouts_handled",
+        headerName: "No. of Tapeouts Handled",
+        type: "number",
+        headerAlign: "left",
+        align: "left",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+    
+    {
+      field: "expin_in_years",
+      headerName: "Years of Exp.",
       type: "number",
       headerAlign: "left",
       align: "left",
       flex: 1,
-    },
-    {
-      field: "location",
-      headerName:"Location",
-      headerAlign: "left",
-      align: "left",
-      type:"string",
-      flex:1.5,
+      cellClassName: "name-column--cell",
     },
   ];
 

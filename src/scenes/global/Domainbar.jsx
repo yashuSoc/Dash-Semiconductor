@@ -140,13 +140,6 @@ const Domainbar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Domain Leader Clients"
-              to="/domainLeader/domainclients"
-              icon={<ContactsOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
               title="Domain Leader Project"
               to="/domainLeader/domainproject"
               icon={<ReceiptOutlinedIcon />}
