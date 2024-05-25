@@ -36,7 +36,6 @@ import Domaincalendar from "./scenes/domainLeader/domaincalendar";
 import Domainbar from "./scenes/global/Domainbar";
 import Domainboard from "./scenes/domainLeader/domainDashboard";
 import Domainprofile from "./scenes/domainLeader/domainleader";
-import Domainclients from "./scenes/domainLeader/domainclient";
 import Domainprojects from "./scenes/domainLeader/domainproject";
 import Domainform from "./scenes/domainLeader/domainform";
 import Icclients from "./scenes/icDesign/icClients";

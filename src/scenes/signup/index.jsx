@@ -110,7 +110,7 @@ const SignupPage = ({ onSignInClick, onHide }) => {
             case 'Customer':
                 navigate('/customerDashboard');
                 break;
-            case 'Ic Design':
+            case 'IC design service provider':
                 navigate('/icDesign/icboard');
                 break;
             case 'Domain Leader':
@@ -133,6 +133,7 @@ const SignupPage = ({ onSignInClick, onHide }) => {
           }
           sessionStorage.setItem('user_id', response.data.user_id);
           sessionStorage.setItem('role_id', response.data.role_id);
+          sessionStorage.setItem('session_id', response.data.session_id)
           alert("Signup successful");
         } catch (error) {
           console.error('Error submitting form:', error);
@@ -189,7 +190,7 @@ const SignupPage = ({ onSignInClick, onHide }) => {
                 <MenuItem value="Customer">Customer</MenuItem>
                 <MenuItem value="Engineer">Engineer</MenuItem>
                 <MenuItem value="Domain Leader">Domain Leader</MenuItem>
-                <MenuItem value="IC design service provider">Ic Design</MenuItem>
+                <MenuItem value="IC design service provider">IC design service provider</MenuItem>
               </Select>
               <FormHelperText>{dropdownError}</FormHelperText>
             </FormControl>

@@ -271,7 +271,7 @@ app.post('/signup', async (req, res) => {
       case 'Customer':
         role_id = 2;
         break;
-      case 'Ic Design':
+      case 'IC design service provider':
         role_id = 3;
         break;
       case 'Domain Leader':
@@ -641,7 +641,7 @@ app.post('/customerRequestApproved', async (req, res) => {
 // IC Design Service Provider Firm
 app.post('/IcDesignInprogress', async (req, res) => {
   try {
-    const { icname, iclocation, icemployees, icprojects, icclients, user_id, no_of_dv, no_of_dft, no_of_pd, detailsofdv, detailsofpd, detailsofdft } = req.body;
+    const { icname, iclocation, icemployees, icprojects, icclients, no_of_employees_dv, no_of_employees_dft, no_of_employees_pd, details_of_dv, details_of_pd, details_of_dft, user_id } = req.body;
 
     // Update query for the "user" table
     const userQuery = `
@@ -652,14 +652,21 @@ app.post('/IcDesignInprogress', async (req, res) => {
 
     // Update query for the "icdesign_fields" table
     const icdesignQuery = `
-      UPDATE "icdesign_fields"
-      SET no_of_dv = $1, no_of_dft = $2, no_of_pd = $3, detailsofdv = $4, detailsofpd = $5, detailsofdft = $6
-      WHERE user_id = $7
-      RETURNING *;`;
+    INSERT INTO "icdesign_fields" (no_of_employees_dv, no_of_employees_dft, no_of_employees_pd, details_of_dv, details_of_pd, details_of_dft, user_id)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    ON CONFLICT (user_id)
+    DO UPDATE SET
+      no_of_employees_dv = $1,
+      no_of_employees_dft = $2,
+      no_of_employees_pd = $3,
+      details_of_dv = $4,
+      details_of_pd = $5,
+      details_of_dft = $6
+    RETURNING *;`;
 
     // Execute the update queries separately
     const userValues = [icname, iclocation, icemployees, icprojects, icclients, user_id];
-    const icdesignValues = [no_of_dv, no_of_dft, no_of_pd, detailsofdv, detailsofpd, detailsofdft, user_id];
+    const icdesignValues = [no_of_employees_dv, no_of_employees_dft, no_of_employees_pd, details_of_dv, details_of_pd, details_of_dft, user_id];
 
     const userResult = await db.query(userQuery, userValues);
     const icdesignResult = await db.query(icdesignQuery, icdesignValues);

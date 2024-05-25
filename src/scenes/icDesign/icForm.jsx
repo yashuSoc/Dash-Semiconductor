@@ -39,7 +39,7 @@ const Icform = () => {
   });
 
     const handleFormSubmit = async (values) => {
-    const { icname, iclocation, icemployees, icprojects, icclients,  no_of_dv, no_of_dft, no_of_pd,  detailsofdv,  detailsofpd, detailsofdft, user_id} = values;
+    const { icname, iclocation, icemployees, icprojects, icclients,  no_of_employees_dv, no_of_employees_dft, no_of_employees_pd, details_of_dv, details_of_pd, details_of_dft} = values;
     try {
       // Fetch user ID from session
       const user_id = sessionStorage.getItem('user_id');
@@ -47,7 +47,7 @@ const Icform = () => {
       
       // Send request with user ID
       await axios.post(`http://localhost:3000/IcDesignInprogress`, {
-        icname, iclocation, icemployees, icprojects, icclients, user_id: user_id// Include user ID in the request
+        icname, iclocation, icemployees, icprojects, icclients, no_of_employees_dv, no_of_employees_dft, no_of_employees_pd, details_of_dv, details_of_pd, details_of_dft,  user_id: user_id// Include user ID in the request
       });
 
       setNotificationSeverity("success");
@@ -166,10 +166,10 @@ const Icform = () => {
                 label="Details of DV(Design Verification)"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.detailsofdv}
-                name="detailsofdv"
-                error={!!touched.detailsofdv && !!errors.detailsofdv}
-                helperText={touched.detailsofdv && errors.detailsofdv}
+                value={values.details_of_dv}
+                name="details_of_dv"
+                error={!!touched.details_of_dv && !!errors.details_of_dv}
+                helperText={touched.details_of_dv && errors.details_of_dv}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -179,10 +179,10 @@ const Icform = () => {
                 label="Number of DV"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.no_of_dv}
-                name="no_of_dv"
-                error={!!touched.no_of_dv && !!errors.no_of_dv}
-                helperText={touched.no_of_dv && errors.no_of_dv}
+                value={values.no_of_employees_dv}
+                name="no_of_employees_dv"
+                error={!!touched.no_of_employees_dv && !!errors.no_of_employees_dv}
+                helperText={touched.no_of_employees_dv && errors.no_of_employees_dv}
                 sx={{ gridColumn: "span 1" }}
               />
               <TextField
@@ -192,10 +192,10 @@ const Icform = () => {
                 label="Details of DFT(Design For Test)"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.detailsofdft}
-                name="detailsofdft"
-                error={!!touched.detailsofdft && !!errors.detailsofdft}
-                helperText={touched.detailsofdft && errors.detailsofdft}
+                value={values.details_of_dft}
+                name="details_of_dft"
+                error={!!touched.details_of_dft && !!errors.details_of_dft}
+                helperText={touched.details_of_dft && errors.details_of_dft}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -205,10 +205,10 @@ const Icform = () => {
                 label="Number of DFT"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.no_of_dft}
-                name="no_of_dft"
-                error={!!touched.no_of_dft && !!errors.no_of_dft}
-                helperText={touched.no_of_dft && errors.no_of_dft}
+                value={values.no_of_employees_dft}
+                name="no_of_employees_dft"
+                error={!!touched.no_of_employees_dft && !!errors.no_of_employees_dft}
+                helperText={touched.no_of_employees_dft && errors.no_of_employees_dft}
                 sx={{ gridColumn: "span 1" }}
               />
               <TextField
@@ -218,10 +218,10 @@ const Icform = () => {
                 label="Details of PD(Physical Design)"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.detailsofpd}
-                name="detailsofpd"
-                error={!!touched.detailsofpd && !!errors.detailsofpd}
-                helperText={touched.detailsofpd && errors.detailsofpd}
+                value={values.details_of_pd}
+                name="details_of_pd"
+                error={!!touched.details_of_pd && !!errors.details_of_pd}
+                helperText={touched.details_of_pd && errors.details_of_pd}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -231,10 +231,10 @@ const Icform = () => {
                 label="Number of PD"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.no_of_pd}
-                name="no_of_pd"
-                error={!!touched.no_of_pd && !!errors.no_of_pd}
-                helperText={touched.no_of_pd && errors.no_of_pd}
+                value={values.no_of_employees_pd}
+                name="no_of_employees_pd"
+                error={!!touched.no_of_employees_pd && !!errors.no_of_employees_pd}
+                helperText={touched.no_of_employees_pd && errors.no_of_employees_pd}
                 sx={{ gridColumn: "span 1" }}
               />
             </Box>
