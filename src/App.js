@@ -54,6 +54,10 @@ import DomainAdminProfile from "./scenes/domainAdmin";
 import Domainprogress from "./scenes/domainAdmin/inprogress";
 import DomainApproved from "./scenes/domainAdmin/approved";
 import DomainRejected from "./scenes/domainAdmin/rejected";
+import IcAdminProfile from "./scenes/designAdmin";
+import IcAdminProgress from "./scenes/designAdmin/inprogress";
+import IcAdminApproved from "./scenes/designAdmin/approved";
+import IcAdminRejected from "./scenes/designAdmin/rejected";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -141,6 +145,12 @@ function App() {
               <Route path="/domain/inprogress" element={<Domainprogress />}/>
               <Route path="/domain/approved" element={<DomainApproved />}/>
               <Route path="/domain/rejected" element={<DomainRejected />}/>
+
+
+              <Route path="/design" element={<IcAdminProfile />}/>
+              <Route path="/design/approved" element={<IcAdminApproved />}/>
+              <Route path="/design/inprogress" element={<IcAdminProgress />}/>
+              <Route path="/design/rejected" element={<IcAdminRejected />}/>
 
 
 

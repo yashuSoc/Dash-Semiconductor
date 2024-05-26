@@ -212,7 +212,7 @@ const Sidebar = () => {
             <SubMenu title="IC Design Services" icon={<ContactsOutlinedIcon />}>
             <SubOption
                 title="IC Design Profile"
-                to="/team"
+                to="/design"
                 icon={<Person4Icon />}
                 selected={selected}
                 setSelected={setSelected}
@@ -220,21 +220,21 @@ const Sidebar = () => {
               <SubMenu title="Approvals" icon={<AddCardIcon />}>
                 <DoubleNestedOption
                   title="Approved"
-                  to="/icdesign/approval"
+                  to="/design/approved"
                   selected={selected}
                   setSelected={setSelected}
                   icon={<ThumbUpIcon />}
                 />
                 <DoubleNestedOption
                   title="InProgress"
-                  to="/icdesign/inprogress"
+                  to="/design/inprogress"
                   selected={selected}
                   setSelected={setSelected}
                   icon={<AutoModeIcon />}
                 />
                 <DoubleNestedOption
                   title="Rejected"
-                  to="/icdesign/rejected"
+                  to="/design/rejected"
                   selected={selected}
                   setSelected={setSelected}
                   icon={<ThumbDownIcon />}

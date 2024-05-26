@@ -680,7 +680,101 @@ app.post('/IcDesignInprogress', async (req, res) => {
 
 
 
+//IC DESIGN ADMIN PROFILE
+app.get('/adminDesignProfile', async (req, res) => {
+  try {
+    const result = await db.query(`SELECT 
+    u.user_id,
+    u.name AS user_name,
+    u.location,
+    u.no_of_employees,
+    u.projects_delivered,
+    u.existing_clients,
+    up.no_of_employees_dv,
+    up.no_of_employees_dft,
+    up.no_of_employees_pd
+  FROM "user" u
+  LEFT JOIN icdesign_fields up ON u.user_id = up.user_id
+  WHERE u.user_status = 'approved' AND u.role_id = 3;`);
+  res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
+
+// IC DESIGN ADMIN INPROGRESS
+app.get('/adminDesignInprogress', async (req, res) => {
+  try {
+    const result = await db.query(`SELECT 
+    u.user_id,
+    u.name AS user_name,
+    u.location,
+    u.no_of_employees,
+    u.projects_delivered,
+    u.existing_clients,
+    up.no_of_employees_dv,
+    up.no_of_employees_dft,
+    up.no_of_employees_pd
+  FROM "user" u
+  LEFT JOIN icdesign_fields up ON u.user_id = up.user_id
+  WHERE u.user_status = 'inprogress' AND u.role_id = 3;`);
+  res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// IC DESIGN REJECTION REQUEST
+app.post('/adminDesignRejection', async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2', ['rejected', id]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// IC DESIGN APPROVAL REQUEST
+app.post('/adminDesignApproved', async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2', ['approved', id]);
+    res.sendStatus(200); // Send a success response
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// IC DESIGN REJCTED CASES
+app.get('/adminDesignRejected', async (req, res) => {
+  try {
+    const result = await db.query(`SELECT 
+    u.user_id,
+    u.name AS user_name,
+    u.location,
+    u.no_of_employees,
+    u.projects_delivered,
+    u.existing_clients,
+    up.no_of_employees_dv,
+    up.no_of_employees_dft,
+    up.no_of_employees_pd
+  FROM "user" u
+  LEFT JOIN icdesign_fields up ON u.user_id = up.user_id
+  WHERE u.user_status = 'rejected' AND u.role_id = 3;`);
+  res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 
