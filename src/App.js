@@ -58,6 +58,7 @@ import IcAdminProfile from "./scenes/designAdmin";
 import IcAdminProgress from "./scenes/designAdmin/inprogress";
 import IcAdminApproved from "./scenes/designAdmin/approved";
 import IcAdminRejected from "./scenes/designAdmin/rejected";
+import Profile from "./scenes/profile";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -165,6 +166,7 @@ function App() {
               <Route path="/faq" element={<FAQ />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/geography" element={<Geography />} />
+              <Route path="/profile" element={<Profile />} />
               
             </Routes>
           </main>

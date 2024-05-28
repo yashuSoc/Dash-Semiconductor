@@ -1271,11 +1271,14 @@ app.get('/statistics', async (req, res) => {
 
 
 // USER
-app.get('/user/:userId', async (req, res) => {
+app.get('/user', async (req, res) => {
   try {
-    const { userId } = req.params; // Destructure userId from req.params
+    const { userId } = req.query; // Destructure userId from req.params
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
     const query = `
-      SELECT name
+      SELECT *
       FROM "user"
       WHERE user_id = $1
     `;

@@ -130,35 +130,36 @@ const Sidebar = () => {
               </Box>
             )}
           </MenuItem>
-
           {!isCollapsed && (
-            <Box mb="25px">
-              <Box display="flex" justifyContent="center" alignItems="center">
-              <Link to="/">
-                  <img
-                    alt="profile-user"
-                    width="100px"
-                    height="100px"
-                    src={`../../assets/user.png`}
-                    style={{ cursor: "pointer", borderRadius: "50%" }}
-                  />
-                </Link>
-              </Box>
-              <Box textAlign="center">
-                <Typography
-                  variant="h2"
-                  color={colors.grey[100]}
-                  fontWeight="bold"
-                  sx={{ m: "10px 0 0 0" }}
-                >
-                  Yash
-                </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
-                  SoCTeamup
-                </Typography>
-              </Box>
-            </Box>
-          )}
+      <Box mb="25px">
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <Link to="/profile"> {/* Link to the profile page */}
+            <img
+              alt="profile-user"
+              width="100px"
+              height="100px"
+              src={`./avatar.png`}
+              style={{ cursor: "pointer", borderRadius: "50%" }}
+            />
+          </Link>
+        </Box>
+        <Box textAlign="center">
+          <Link to="/profile" style={{ textDecoration: 'none' }}> {/* Link to the profile page */}
+            <Typography
+              variant="h2"
+              color={colors.grey[100]}
+              fontWeight="bold"
+              sx={{ m: "10px 0 0 0", cursor: "pointer" }}
+            >
+              Yash
+            </Typography>
+          </Link>
+          <Typography variant="h5" color={colors.greenAccent[500]}>
+            SoCTeamup
+          </Typography>
+        </Box>
+      </Box>
+    )}
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Item

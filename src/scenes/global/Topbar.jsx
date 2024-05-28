@@ -42,6 +42,9 @@ const Topbar = () => {
         navigate('/signin');
       });
   };
+  const handleProfile= () => {
+    navigate('/profile');
+  }
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
@@ -94,7 +97,7 @@ const Topbar = () => {
           }}
           getContentAnchorEl={null}
         >
-          <MenuItem onClick={handleMenuClose}>
+          <MenuItem onClick={handleProfile}>
             <Typography variant="body1">Profile</Typography>
           </MenuItem>
           <MenuItem onClick={handleMenuClose}>

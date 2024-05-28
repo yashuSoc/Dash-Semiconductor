@@ -15,7 +15,6 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import DomainIcon from '@mui/icons-material/Domain';
 
-
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -49,8 +48,6 @@ const progress_i = totalDesigners / maxDesigners;
 const progress_e = totalEngineers / maxEngineers;
 const progress_d = totalDomain / maxDomain;
 
-
-
   return (
     <Box m="20px">
       {/* HEADER */}
@@ -65,6 +62,7 @@ const progress_d = totalDomain / maxDomain;
               fontSize: "14px",
               fontWeight: "bold",
               padding: "10px 20px",
+              borderRadius: "10px", // Rounded edges
             }}
           >
             <DownloadOutlinedIcon sx={{ mr: "10px" }} />
@@ -87,6 +85,7 @@ const progress_d = totalDomain / maxDomain;
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="10px" // Rounded edges
         >
           <StatBox
             title={statistics.designers}
@@ -106,6 +105,7 @@ const progress_d = totalDomain / maxDomain;
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="10px" // Rounded edges
         >
           <StatBox
             title={statistics.customers}
@@ -125,6 +125,7 @@ const progress_d = totalDomain / maxDomain;
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="8px" // Rounded edges
         >
           <StatBox
             title={statistics.engineers}
@@ -144,6 +145,7 @@ const progress_d = totalDomain / maxDomain;
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="8px" // Rounded edges
         >
           <StatBox
             title={statistics.domainLeaders}
@@ -163,6 +165,7 @@ const progress_d = totalDomain / maxDomain;
           gridColumn="span 8"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
+          borderRadius="8px" // Rounded edges
         >
           <Box
             mt="25px"
@@ -176,6 +179,7 @@ const progress_d = totalDomain / maxDomain;
                 variant="h5"
                 fontWeight="600"
                 color={colors.grey[100]}
+                
               >
                 Revenue Generated
               </Typography>
@@ -204,6 +208,7 @@ const progress_d = totalDomain / maxDomain;
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
           overflow="auto"
+          borderRadius="8px" // Rounded edges
         >
           <Box
             display="flex"
@@ -256,6 +261,7 @@ const progress_d = totalDomain / maxDomain;
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
           p="30px"
+          borderRadius="8px" // Rounded edges
         >
           <Typography variant="h5" fontWeight="600">
             Campaign
@@ -281,6 +287,7 @@ const progress_d = totalDomain / maxDomain;
           gridColumn="span 4"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
+          borderRadius="8px" // Rounded edges
         >
           <Typography
             variant="h5"
@@ -298,6 +305,7 @@ const progress_d = totalDomain / maxDomain;
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
           padding="30px"
+          borderRadius="8px" // Rounded edges
         >
           <Typography
             variant="h5"

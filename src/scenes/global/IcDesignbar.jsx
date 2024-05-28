@@ -92,7 +92,7 @@ const Icdesignbar = () => {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src={`../../assets/user.png`}
+                  src={`./avatar.png`}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>
