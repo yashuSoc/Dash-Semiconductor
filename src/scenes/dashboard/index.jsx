@@ -2,20 +2,54 @@ import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import EmailIcon from "@mui/icons-material/Email";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
 import GeographyChart from "../../components/GeographyChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import DesignServicesIcon from '@mui/icons-material/DesignServices';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import EngineeringIcon from '@mui/icons-material/Engineering';
+import DomainIcon from '@mui/icons-material/Domain';
+
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [statistics, setStatistics] = useState({
+    designers: 0,
+    customers: 0,
+    engineers: 0,
+    domainLeaders: 0
+  });
+  useEffect(() => {
+    fetchData(); // Fetch data when the component mounts
+  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/statistics`); 
+      setStatistics(response.data); // Update state with the response data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+const totalDesigners = statistics.designers; 
+const totalcustomers = statistics.customers;
+const totalEngineers = statistics.engineers;
+const totalDomain = statistics.domainLeaders;
+const maxCusotmers = 100;
+const maxDesigners = 100; 
+const maxEngineers = 100;
+const maxDomain = 100;
+const progress_c = totalcustomers / maxCusotmers;
+const progress_i = totalDesigners / maxDesigners; 
+const progress_e = totalEngineers / maxEngineers;
+const progress_d = totalDomain / maxDomain;
+
+
 
   return (
     <Box m="20px">
@@ -55,12 +89,12 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="12,361"
-            subtitle="Emails Sent"
-            progress="0.75"
+            title={statistics.designers}
+            subtitle="Total IC Desginers"
+            progress={progress_i}
             increase="+14%"
             icon={
-              <EmailIcon
+              <DesignServicesIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -74,12 +108,12 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="431,225"
-            subtitle="Sales Obtained"
-            progress="0.50"
+            title={statistics.customers}
+            subtitle="Total Customers"
+            progress={progress_c}
             increase="+21%"
             icon={
-              <PointOfSaleIcon
+              <PeopleAltIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -93,12 +127,12 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="32,441"
-            subtitle="New Clients"
-            progress="0.30"
+            title={statistics.engineers}
+            subtitle="Total Engineers"
+            progress={progress_e}
             increase="+5%"
             icon={
-              <PersonAddIcon
+              <EngineeringIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -112,12 +146,12 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress="0.80"
+            title={statistics.domainLeaders}
+            subtitle="Total Domain Leaders"
+            progress={progress_d}
             increase="+43%"
             icon={
-              <TrafficIcon
+              <DomainIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -180,7 +214,7 @@ const Dashboard = () => {
             p="15px"
           >
             <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Transactions
+              Recent Approved Profiles
             </Typography>
           </Box>
           {mockTransactions.map((transaction, i) => (

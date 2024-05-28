@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
@@ -21,8 +21,7 @@ const CustomerReq = () => {
   // Fetch data from the API when the component mounts
   
 
-  // Function to fetch data from the API
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const user_id = sessionStorage.getItem('user_id');
       const response = await axios.get(`http://localhost:3000/customerReq?user_id=${user_id}`);
@@ -38,7 +37,8 @@ const CustomerReq = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }, []);
+
   const getStatusLabel = (requeststatus_id) => {
     switch (requeststatus_id) {
       case 0:
@@ -53,7 +53,7 @@ const CustomerReq = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
 
   return (

@@ -3,17 +3,21 @@ const pg = require('pg');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const path = require('path'); 
+const http = require('http');
+const socketIo = require('socket.io');
+const app = express();
 
 const session = require('express-session');
 const nodemailer = require('nodemailer');
 
 const port = 3000;
-const app = express();
 const upload = multer();
 app.use(cors());
 app.use(bodyParser.json())
 const crypto = require('crypto');
-
+const server = http.createServer(app);
+const io = socketIo(server);
 const generateSecretKey = () => {
     return crypto.randomBytes(32).toString('hex');
 };
@@ -27,6 +31,15 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false, maxAge: 1*60*60*1000 } // Set secure: true in production with HTTPS
 }));
+
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
 
 const db = new pg.Client({
   user: "postgres",
@@ -52,122 +65,145 @@ db.connect()
     }
 });
 
-
-async function sendMail(){
-  //1. create an email transporter.
-  //SMTP (Simple Mail Transfer Protocol)
- const transporter =  nodemailer.createTransport({
-      service: 'gmail',
-      auth:{
-          user: 'yashukhowal15@gmail.com',
-          pass: 'trtxankmvhliqhda'
-      }
-  })
-
-
-  //2.configure email content.
-  const mailOptions = {
-    from: 'socteamup@gmail.com',
-    to: 'yash.ec19@nsut.ac.in',
-    subject: 'Welcome to NodeJS App',
-    html: `
-    <html>
-  <head>
-    <style>
-      /* Reset CSS */
-      body,
-      html {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        background-color: #f2f2f2;
-      }
-
-      /* Container */
-      .container {
-        max-width: 600px;
-        margin: 20px auto;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-      }
-
-      /* Heading */
-      .heading {
-        text-align: center;
-        color: #333333;
-        font-size: 24px;
-        margin-bottom: 20px;
-      }
-
-      /* Image */
-      .image-container {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-
-      /* Content */
-      .content {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #666666;
-      }
-
-      /* Button */
-      .button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: #ffffff;
-        text-decoration: none;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-      }
-
-      .button:hover {
-        background-color: #0056b3;
-      }
-
-      /* Company Details */
-      .company-details {
-        margin-top: 40px;
-        border-top: 1px solid #cccccc;
-        padding-top: 20px;
-        color: #666666;
-        font-size: 14px;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1 class="heading">Hurray! your Request at SOCTeamup</h1>
-      <div class="image-container">
-  <img src="data:image/png;base64,base64-encoded-image-data" alt="Logo" style="max-width: 200px; height: auto;">
-</div>
-      <p class="content">Your request has been approved. Thank you!</p>
-      <a href="https://your-website.com">Visit Our Website</a>
-    </div>
-    <div class="company-details">
-      <p>SocTeamup Semiconductor</p>
-      <p></p>
-      <p>Email: info@example.com | Phone: +123456789</p>
-    </div>
-  </body>
-</html>
-    `,
-  };
-
-  //3. send email
+// Utility function to fetch user details
+async function fetchUserDetails(userId) {
   try {
-     const result = await transporter.sendMail(mailOptions);
-     console.log('Eamil sent successfully')
+    const userResult = await db.query('SELECT email, name, user_status, changedatetime FROM "user" WHERE user_id = $1 AND role_id = 2', [userId]);
+    if (userResult.rows.length === 0) {
+      return null;
+    }
+    return userResult.rows[0];
   } catch (error) {
-      console.log('Email send failed with error:', error)
+    console.error('Error fetching user details:', error);
+    throw error;
   }
 }
+
+
+
+// send email
+async function sendMail(toEmail, name, user_status, email, changedatetime) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'yashukhowal15@gmail.com',
+      pass: 'trtxankmvhliqhda',
+    },
+  });
+
+  const mailOptions = {
+    from: 'socteamup@gmail.com',
+    to: toEmail,
+    subject: 'Your Request Status Has Changed',
+    html: `
+    <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOCTeamup Approval</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f2f2f2;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .heading {
+      text-align: center;
+      color: #333333;
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    .image-container {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .content {
+      text-align: left;
+      margin-bottom: 20px;
+      color: #666666;
+      font-size: 16px;
+    }
+
+    .company-details {
+      margin-top: 30px;
+      border-top: 1px solid #cccccc;
+      padding-top: 15px;
+      color: #666666;
+      font-size: 13px;
+      text-align: center;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 15px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .footer a {
+      color: #007bff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="heading">Hurray! Your Request at SOCTeamup</h1>
+    <div class="image-container">
+      <img src="cid:companylogo" alt="Logo" style="max-width: 180px; height: auto;">
+    </div>
+    <p class="content">Dear ${name},</p>
+    <p class="content">I'm pleased to inform you that your request to SOCTeamup has been ${user_status} by the Admin.</p>
+    <p class="content">Here are the details of your request:</p>
+    <ul class="content">
+      <li><strong>Request:</strong> ${email}</li>
+      <li><strong>${user_status} Date:</strong> ${changedatetime}</li>
+    </ul>
+    <p class="content">If you have any further questions or concerns, feel free to reach out to us.</p>
+    <div style="text-align: center;">
+      <a href="https://www.socteamup.com" >Visit Our Website</a>
+    </div>
+  </div>
+  <div class="company-details">
+    <p>SocTeamup Semiconductor</p>
+    <p>Email: info@example.com | Phone: +123456789</p>
+  </div>
+  <div class="footer">
+    <a href="https://www.socteamup.com/about-us/">About Us</a>
+    <a href="https://www.socteamup.com/contact-us/">Contact</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+  </div>
+</body>
+</html>
+    `,
+    attachments: [{
+      filename: 'Final.png',
+      path: path.resolve(__dirname, 'Final.png'), // Update this path to where your image is located
+      cid: 'companylogo' // Same CID value as in the HTML img src
+    }]
+  };
+
+  try {
+    const result = await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.log('Email send failed with error:', error);
+  }
+}
+
 
 // sendMail()
 
@@ -524,9 +560,10 @@ app.get('/getCustomerRequirements', async (req, res) => {
     // const userId = req.params.userId;
 
     const query = `
-      SELECT  ur.user_id, u.name AS user_name, ur.no_of_ic, ur.no_of_dl, ur.no_of_eng 
+      SELECT ur.user_id, u.name AS user_name, ur.no_of_ic, ur.no_of_dl, ur.no_of_eng 
       FROM "user_request" ur
-      JOIN "user" u ON ur.user_id = u.user_id WHERE requeststatus_id = 0
+      JOIN "user" u ON ur.user_id = u.user_id 
+      WHERE requeststatus_id = 0 
     `;
 
     const result = await db.query(query);
@@ -582,8 +619,22 @@ app.get('/adminApproved', async (req, res) => {
 app.post('/admincustomerApproved', async (req, res) => {
   try {
     const { id } = req.body;
+    
     // Update the status in the database for users with role_id = 2
     await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 2', ["approved", id]);
+// Fetch user details using the utility function
+const userDetails = await fetchUserDetails(id);
+console.log(userDetails);
+if (!userDetails) {
+  return res.status(404).json({ error: 'User not found or does not have the correct role' });
+}
+const { email, name, user_status, changedatetime } = userDetails;
+    // Send the rejection email asynchronously
+    sendMail(email, name, user_status, email, changedatetime).catch(error => {
+      console.error('Error sending email:', error);
+    });
+    
+
     res.sendStatus(200); // Send a success response
   } catch (error) {
     console.error('Error approving user:', error);
@@ -592,14 +643,31 @@ app.post('/admincustomerApproved', async (req, res) => {
 });
 
 
+
+
+
+
 app.post('/admincustomerRejected', async (req, res) => {
   try {
     const { id } = req.body;
     // Update the status in the database for users with role_id = 2
     await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 2', ["rejected", id]);
+
+    const userDetails = await fetchUserDetails(id);
+     if (!userDetails) {
+       return res.status(404).json({ error: 'User not found or does not have the correct role' });
+     }
+     const { email, name, user_status, changedatetime } = userDetails;
+
+    // Send the rejection email asynchronously
+    sendMail(email, name, user_status, email, changedatetime).catch(error => {
+      console.error('Error sending email:', error);
+    });
+    io.emit('notification', { message: 'A new customer request has been rejected.' });
+
     res.sendStatus(200); // Send a success response
   } catch (error) {
-    console.error('Error approving user:', error);
+    console.error('Error rejecting user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -731,8 +799,19 @@ app.get('/adminDesignInprogress', async (req, res) => {
 app.post('/adminDesignRejection', async (req, res) => {
   try {
     const { id } = req.body;
+    
 
     await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2', ['rejected', id]);
+    const userDetails = await fetchUserDetails(id);
+    if (!userDetails) {
+      return res.status(404).json({ error: 'User not found or does not have the correct role' });
+    }
+    const { email, name, user_status, changedatetime } = userDetails;
+
+    sendMail(email, name, user_status, email, changedatetime).catch(error => {
+      console.error('Error sending email:', error);
+    });
+
     res.sendStatus(200); // Send a success response
   } catch (error) {
     console.error('Error approving user:', error);
@@ -744,8 +823,19 @@ app.post('/adminDesignRejection', async (req, res) => {
 app.post('/adminDesignApproved', async (req, res) => {
   try {
     const { id } = req.body;
+   
 
     await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2', ['approved', id]);
+    const userDetails = await fetchUserDetails(id);
+    if (!userDetails) {
+      return res.status(404).json({ error: 'User not found or does not have the correct role' });
+    }
+    const { email, name, user_status, changedatetime } = userDetails;
+
+    sendMail(email, name, user_status, email, changedatetime).catch(error => {
+      console.error('Error sending email:', error);
+    });
+
     res.sendStatus(200); // Send a success response
   } catch (error) {
     console.error('Error approving user:', error);
@@ -753,7 +843,7 @@ app.post('/adminDesignApproved', async (req, res) => {
   }
 });
 
-// IC DESIGN REJCTED CASES
+// IC DESIGN REJECTED CASES
 app.get('/adminDesignRejected', async (req, res) => {
   try {
     const result = await db.query(`SELECT 
@@ -900,8 +990,20 @@ app.get('/adminEngineerInprogress', async (req, res) => {
 app.post('/adminEngineerApproved', async (req, res) => {
   try {
     const { id } = req.body;
-    // Update the status in the database for users with role_id = 2
+   
+    
+     // Update the status in the database for users with role_id = 2
     await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 5', ["approved", id]);
+    const userDetails = await fetchUserDetails(id);
+    if (!userDetails) {
+      return res.status(404).json({ error: 'User not found or does not have the correct role' });
+    }
+    const { email, name, user_status, changedatetime } = userDetails;
+
+    sendMail(email, name, user_status, email, changedatetime).catch(error => {
+      console.error('Error sending email:', error);
+    });
+
     res.sendStatus(200); // Send a success response
   } catch (error) {
     console.error('Error approving user:', error);
@@ -914,8 +1016,17 @@ app.post('/adminEngineerApproved', async (req, res) => {
 app.post('/adminEngineerRejected', async (req, res) => {
   try {
     const { id } = req.body;
+
     // Update the status in the database for users with role_id = 2
     await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 5', ["rejected", id]);
+    const userDetails = await fetchUserDetails(id);
+    if (!userDetails) {
+      return res.status(404).json({ error: 'User not found or does not have the correct role' });
+    }
+    const { email, name, user_status, changedatetime } = userDetails;
+    sendMail(email, name, user_status, email, changedatetime).catch(error => {
+      console.error('Error sending email:', error);
+    });
     res.sendStatus(200); // Send a success response
   } catch (error) {
     console.error('Error approving user:', error);
@@ -1070,8 +1181,18 @@ WHERE role_id = 4 AND user_status = 'rejected'
 app.post('/adminDomainApproved', async (req, res) => {
   try {
     const { id } = req.body;
+   
+    
     // Update the status in the database for users with role_id = 2
     await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 4', ["approved", id]);
+    const userDetails = await fetchUserDetails(id);
+    if (!userDetails) {
+      return res.status(404).json({ error: 'User not found or does not have the correct role' });
+    }
+    const { email, name, user_status, changedatetime } = userDetails;
+    sendMail(email, name, user_status, email, changedatetime).catch(error => {
+      console.error('Error sending email:', error);
+    });
     res.sendStatus(200); // Send a success response
   } catch (error) {
     console.error('Error approving user:', error);
@@ -1084,8 +1205,20 @@ app.post('/adminDomainApproved', async (req, res) => {
 app.post('/adminDomainRejected', async (req, res) => {
   try {
     const { id } = req.body;
+
+   
     // Update the status in the database for users with role_id = 2
     await db.query('UPDATE "user" SET user_status = $1 WHERE user_id = $2 AND role_id = 4', ["rejected", id]);
+    const userDetails = await fetchUserDetails(id);
+    if (!userDetails) {
+      return res.status(404).json({ error: 'User not found or does not have the correct role' });
+    }
+    const { email, name, user_status, changedatetime } = userDetails;
+
+    sendMail(email, name, user_status, email, changedatetime).catch(error => {
+      console.error('Error sending email:', error);
+    });
+
     res.sendStatus(200); // Send a success response
   } catch (error) {
     console.error('Error approving user:', error);
@@ -1094,6 +1227,42 @@ app.post('/adminDomainRejected', async (req, res) => {
 });
 
 
+
+app.get('/statistics', async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT role_id, COUNT(*) AS count FROM "user" GROUP BY role_id'
+    );
+    const statistics = {
+      designers: 0,
+      customers: 0,
+      engineers: 0,
+      domainLeaders: 0
+    };
+    result.rows.forEach(row => {
+      switch (row.role_id) {
+        case 2: // Assuming role_id 1 is for IC Designers
+          statistics.customers = parseInt(row.count);
+          break;
+        case 3: // Assuming role_id 2 is for Customers
+          statistics.designers = parseInt(row.count);
+          break;
+        case 4: // Assuming role_id 3 is for Engineers
+          statistics.domainLeaders = parseInt(row.count);
+          break;
+        case 5: // Assuming role_id 4 is for Domain Leaders
+          statistics.engineers = parseInt(row.count);
+          break;
+        default:
+          break;
+      }
+    });
+    res.json(statistics);
+  } catch (err) {
+    console.error('Error executing query', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 

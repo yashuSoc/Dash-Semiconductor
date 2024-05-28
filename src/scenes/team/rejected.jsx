@@ -27,7 +27,7 @@ const Customerrejected = () => {
     fetchData();
   }, []);
   const columns = [
-    { field: "customerid", headerName: "ID" },
+    { field: "user_id", headerName: "ID" },
     {
       field: "name",
       headerName: "Company Name",
