@@ -16,7 +16,6 @@ import React, { useState, useEffect } from "react";
 import UpdateIcon from "@mui/icons-material/Update";
 import StatBox from "../../components/StatBox";
 
-
 const Profile = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -28,7 +27,7 @@ const Profile = () => {
     role_id: "",
     user_id: "",
     about_user: "",
-    phnno:"",
+    phnno: "",
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [updatedProfile, setUpdatedProfile] = useState(profile);
@@ -36,9 +35,8 @@ const Profile = () => {
   const fetchData = async () => {
     try {
       const user_id = sessionStorage.getItem("user_id");
-      const response = await axios.get("http://localhost:3000/user", {
+      const response = await axios.get("http://localhost:3000/CustomerUser", {
         params: {
-          // Use params to send query parameters
           userId: user_id,
         },
       });
@@ -69,7 +67,7 @@ const Profile = () => {
   const handleUpdateProfile = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/profile`,
+        `http://localhost:3000/updateProfile`,
         updatedProfile
       );
       setProfile(response.data);
@@ -84,7 +82,6 @@ const Profile = () => {
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="User's Profile" subtitle="Manage Your Profile" />
-
         <Box>
           <Button
             sx={{
@@ -93,7 +90,7 @@ const Profile = () => {
               fontSize: "14px",
               fontWeight: "bold",
               padding: "10px 20px",
-              borderRadius: "10px", // Rounded edges
+              borderRadius: "10px",
             }}
             onClick={handleOpenDialog}
           >
@@ -117,7 +114,7 @@ const Profile = () => {
           gridColumn="span 12"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
-          borderRadius="10px" // Rounded edges
+          borderRadius="10px"
         >
           <Box
             mt="25px"
@@ -134,7 +131,7 @@ const Profile = () => {
                 height="120px"
                 style={{ borderRadius: "50%", marginRight: "20px" }}
               />
-              <Box display="flex" ml="20px" flexDirection="column" p="20px" >
+              <Box display="flex" ml="20px" flexDirection="column" p="20px">
                 <Typography mb="20px" variant="h1" color={colors.grey[100]}>
                   {profile.name}
                 </Typography>
@@ -147,7 +144,6 @@ const Profile = () => {
                 <Typography variant="h4" color={colors.grey[300]}>
                   ID: {profile.user_id}
                 </Typography>
-
                 <Typography variant="body2" color={colors.grey[300]}>
                   Created At: {profile.createdatetime}
                 </Typography>
@@ -170,7 +166,7 @@ const Profile = () => {
           display="flex"
           alignItems="center"
           justifyContent="center"
-          borderRadius="10px" // Rounded edges
+          borderRadius="10px"
         >
           <StatBox
             title="Analytics"
@@ -190,7 +186,7 @@ const Profile = () => {
           display="flex"
           alignItems="center"
           justifyContent="center"
-          borderRadius="10px" // Rounded edges
+          borderRadius="10px"
         >
           <StatBox
             title="Performance"
@@ -231,9 +227,9 @@ const Profile = () => {
           />
           <TextField
             margin="dense"
-            name="phone"
+            name="phnno"
             label="Phone No."
-            type="number"
+            type="text"
             fullWidth
             value={updatedProfile.phnno}
             onChange={handleInputChange}
@@ -249,7 +245,7 @@ const Profile = () => {
           />
           <TextField
             margin="dense"
-            name="about"
+            name="about_user"
             label="About"
             type="text"
             fullWidth

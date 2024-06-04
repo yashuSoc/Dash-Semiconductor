@@ -1,4 +1,11 @@
-import { Box, useTheme } from "@mui/material";
+import {
+  Box,
+  useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Typography,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { tokens } from "../../theme";
@@ -14,6 +21,8 @@ const Customerprofile = () => {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationSeverity, setNotificationSeverity] = useState("success");
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [detailedData, setDetailedData] = useState(null);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -50,11 +59,28 @@ const Customerprofile = () => {
 
     fetchData();
   }, [navigate]);  
+  const fetchDetailedData = async (userId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/details/${userId}`);
+      setDetailedData(response.data);
+    } catch (error) {
+      console.error("Error fetching detailed data:", error);
+    }
+  };
   const handleNotificationClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setNotificationOpen(false);
+  };
+  const handleRowClick = (params) => {
+    fetchDetailedData(params.row.user_id);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setDetailedData(null);
   };
   const columns = [
     // { field: "customerid", headerName: "Customer ID" }, // Update field name to match data
@@ -101,7 +127,8 @@ const Customerprofile = () => {
           rows={customers}
           columns={columns}
           getRowId={(row) => row.id} 
-          autoHeight// Specify the unique identifier for each row
+          autoHeight
+          onRowClick={handleRowClick}
         />
         <CustomAlert
         open={notificationOpen}
@@ -110,6 +137,64 @@ const Customerprofile = () => {
         message={notificationMessage}
       />
       </Box>
+      <Dialog
+        open={isDialogOpen}
+        onClose={handleCloseDialog}
+        sx={{
+          "& .MuiPaper-root": {
+            backgroundColor: colors.primary[600],
+            color: colors.grey[100],
+            width: "500px",
+            padding: "20px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            backgroundColor: colors.blueAccent[700],
+            color: colors.grey[100],
+            borderRadius: "15px",
+            fontSize:"20px",
+            fontWeight: "Bold"
+          }}
+        >
+          Profile Details
+        </DialogTitle>
+        <DialogContent>
+          {detailedData ? (
+            <>
+              <Typography variant="h5" component="div" marginTop="12px" >
+                <strong>Name:</strong> {detailedData.name}
+              </Typography>
+              <Typography
+                variant="h5"
+                component="div"
+                style={{ marginTop: "12px" }}
+              >
+                <strong>Client Name:</strong> {detailedData.location}
+              </Typography>
+              <Typography
+                variant="h5"
+                component="div"
+                style={{ marginTop: "12px" }}
+              >
+                <strong>CLient Detail</strong> {detailedData.phnno}
+              </Typography>
+              <Typography
+                variant="h5"
+                component="div"
+                style={{ marginTop: "12px" }}
+              >
+                <strong>Project Details</strong> {detailedData.email}
+              </Typography>
+            
+            </>
+          ) : (
+            <div>Loading...</div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

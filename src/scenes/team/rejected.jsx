@@ -1,31 +1,60 @@
-import { Box, useTheme} from "@mui/material";
-import { DataGrid , GridToolbar } from "@mui/x-data-grid";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Typography,
+} from "@mui/material";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 
 const Customerrejected = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [detailedData, setDetailedData] = useState(null);
+
   const fetchData = async () => {
     try {
       const response = await axios.get("http://localhost:3000/adminRejected");
       const dataWithIds = response.data.map((row, index) => ({
         id: index + 1, // Assuming index starts from 0, you can adjust this if necessary
-        ...row
+        ...row,
       }));
       setData(dataWithIds);
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Handle the error gracefully, e.g., show an error message to the user
+    }
+  };
+
+  const fetchDetailedData = async (userId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/details/${userId}`);
+      setDetailedData(response.data);
+    } catch (error) {
+      console.error("Error fetching detailed data:", error);
     }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleRowClick = (params) => {
+    fetchDetailedData(params.row.user_id);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setDetailedData(null);
+  };
+
   const columns = [
     { field: "user_id", headerName: "ID" },
     {
@@ -44,17 +73,17 @@ const Customerrejected = () => {
     },
     {
       field: "location",
-      headerName:"Location",
+      headerName: "Location",
       headerAlign: "left",
       align: "left",
-      type:"string",
-      flex:1.5,
+      type: "string",
+      flex: 1.5,
     },
   ];
 
   return (
     <Box m="20px">
-      <Header title="Customer" subtitle="Managing the Customers"/> 
+      <Header title="Customer" subtitle="Managing the Customers" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -84,8 +113,93 @@ const Customerrejected = () => {
           },
         }}
       >
-        <DataGrid  rows={data} columns={columns} components={{ Toolbar: GridToolbar }} getRowId={(row) => row.id}/>
+        <DataGrid
+          rows={data}
+          columns={columns}
+          components={{ Toolbar: GridToolbar }}
+          getRowId={(row) => row.id}
+          onRowClick={handleRowClick}
+        />
       </Box>
+
+      <Dialog
+        open={isDialogOpen}
+        onClose={handleCloseDialog}
+        sx={{
+          "& .MuiPaper-root": {
+            backgroundColor: colors.primary[600],
+            color: colors.grey[100],
+            width: "500px",
+            padding: "20px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            backgroundColor: colors.blueAccent[700],
+            color: colors.grey[100],
+            borderRadius: "15px",
+            fontSize:"20px",
+            fontWeight: "Bold"
+          }}
+        >
+          Profile Details
+        </DialogTitle>
+        <DialogContent>
+          {detailedData ? (
+            <>
+              <Typography variant="h5" component="div" marginTop="12px" >
+                <strong>Name:</strong> {detailedData.name}
+              </Typography>
+              <Typography
+                variant="h5"
+                component="div"
+                style={{ marginTop: "12px" }}
+              >
+                <strong>Location:</strong> {detailedData.location}
+              </Typography>
+              <Typography
+                variant="h5"
+                component="div"
+                style={{ marginTop: "12px" }}
+              >
+                <strong>Phone No.:</strong> {detailedData.phnno}
+              </Typography>
+              <Typography
+                variant="h5"
+                component="div"
+                style={{ marginTop: "12px" }}
+              >
+                <strong>Email: </strong> {detailedData.email}
+              </Typography>
+              <Typography
+                variant="h5"
+                component="div"
+                style={{ marginTop: "12px" }}
+              >
+                <strong>No. Of Employees: </strong> {detailedData.no_of_employees}
+              </Typography>
+              <Typography
+                variant="h5"
+                component="div"
+                style={{ marginTop: "12px" }}
+              >
+                <strong>Projects Delivered: </strong> {detailedData.projects_delivered}
+              </Typography>
+              <Typography
+                variant="h5"
+                component="div"
+                style={{ marginTop: "12px" }}
+              >
+                <strong>About:</strong> {detailedData.about_user}
+              </Typography>
+            </>
+          ) : (
+            <div>Loading...</div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

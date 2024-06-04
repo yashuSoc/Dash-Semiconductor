@@ -237,23 +237,26 @@ const authenticateUser = async (req, res, next) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+//...SINGIN/....../
 app.post('/signin', async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    // First, check if the email exists in the database
+    const emailQuery = {
+      text: 'SELECT user_id FROM "user" WHERE email = $1',
+      values: [email],
+    };
+
+    const emailResult = await db.query(emailQuery);
+
+    if (emailResult.rows.length === 0) {
+      // Email does not exist
+      res.status(404).json({ success: false, message: 'User not exists. Please create a new User.' });
+      return;
+    }
+
+    // Email exists, now check if the password matches
     const query = {
       text: 'SELECT user_id, role_id FROM "user" WHERE email = $1 AND password = $2',
       values: [email, password],
@@ -285,7 +288,7 @@ app.post('/signin', async (req, res) => {
 
       res.json({ success: true, user_id, role_id, session_id });
     } else {
-      // Authentication failed
+      // Authentication failed due to incorrect password
       res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
   } catch (error) {
@@ -293,6 +296,7 @@ app.post('/signin', async (req, res) => {
     res.status(500).json({ success: false, message: 'An error occurred while signing in' });
   }
 });
+
 
 app.post('/signup', async (req, res) => {
   const { email, password, role } = req.body;
@@ -328,7 +332,7 @@ app.post('/signup', async (req, res) => {
     const emailExistsResult = await db.query(emailExistsQuery);
     const emailExists = emailExistsResult.rows[0].count > 0;
     if (emailExists) {
-      return res.status(400).json({ success: false, message: 'Email already exists' });
+      return res.status(409).json({ success: false, message: 'Email already exists' });
     }
 
     // Insert the new user into the database
@@ -363,6 +367,19 @@ app.post('/signup', async (req, res) => {
     res.status(500).json({ success: false, message: 'An error occurred while signing up' });
   }
 });
+app.get('/icdesigners', async (req,res) =>{
+  try {
+    const result = await db.query(`SELECT 
+    name FROM "user" WHERE
+    role_id = 3 ;`);
+  res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
+
+
 
 
 
@@ -1278,7 +1295,7 @@ app.get('/user', async (req, res) => {
       return res.status(400).json({ error: 'User ID is required' });
     }
     const query = `
-      SELECT *
+      SELECT user_id, role_id, createdatetime, email, location, name, phnno, about_user
       FROM "user"
       WHERE user_id = $1
     `;
@@ -1298,6 +1315,100 @@ app.get('/user', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
+// Customer User
+app.get('/CustomerUser', async (req, res) => {
+  try {
+    const { userId } = req.query; // Destructure userId from req.params
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    const query = `
+      SELECT user_id, role_id, createdatetime, email, location, name, no_of_employees, existing_clients
+      FROM "user"
+      WHERE user_id = $1
+    `;
+    
+    // Execute the query
+    const result = await db.query(query, [userId]); // Pass userId to the query
+    
+    // Check if user is found
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Send the result as JSON
+    res.json(result.rows[0]); // Return the first row (assuming user_id is unique)
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// Update Customer User
+app.put('/updateCustomerUser', async(req, res) =>{
+  const { user_id, name, location, email, no_of_employees, existing_clients } = req.body;
+  try {
+    const result = await db.query(
+      'UPDATE "user" SET name = $1, location = $2, email = $3, no_of_employees = $4, existing_clients = $5 WHERE user_id = $6 RETURNING *',
+      [name, location, email, no_of_employees, existing_clients, user_id]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.get('/details/:user_id', async (req, res) => {
+  try {
+    console.log('Request params:', req.params); // Logging req.params to debug
+    const { user_id } = req.params; // Destructure user_id from req.params
+    console.log('User ID:', user_id);// Destructure userId from req.params
+    if (!user_id) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    const query = `
+      SELECT *
+      FROM "user"
+      WHERE user_id = $1
+    `;
+    
+    // Execute the query
+    const result = await db.query(query, [user_id]); // Pass userId to the query
+    
+    // Check if user is found
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Send the result as JSON
+    res.json(result.rows[0]); // Return the first row (assuming user_id is unique)
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.put('/updateProfile', async(req, res) =>{
+  const { user_id, name, location, email, about_user, phnno } = req.body;
+  try {
+    const result = await db.query(
+      'UPDATE "user" SET name = $1, location = $2, email = $3, about_user = $4, phnno = $5 WHERE user_id = $6 RETURNING *',
+      [name, location, email, about_user, phnno, user_id]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 app.listen(port, () => {

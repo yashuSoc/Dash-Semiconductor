@@ -1,4 +1,4 @@
-import { Box, useTheme } from "@mui/material";
+import { Box, useTheme, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
@@ -9,6 +9,16 @@ const IcAdminProfile = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null); // State to keep track of selected row
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
+  const [selectedRowData, setSelectedRowData] = useState(null); // State to store selected row's data
+  const [updatedProfile, setUpdatedProfile] = useState({
+    name: "",
+    location: "",
+    phone: "",
+    email: "",
+    about: ""
+  });
 
   const fetchData = async () => {
     try {
@@ -31,6 +41,27 @@ const IcAdminProfile = () => {
   useEffect(() => {
     fetchData();
   }, []);
+  const handleRowClick = (params) => {
+    setSelectedRow(params.row.id); // Set selectedRow state to the clicked row's id
+    setSelectedRowData(params.row); // Store clicked row's data
+    setIsDialogOpen(true); // Open the dialog
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false); // Close the dialog
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setUpdatedProfile({ ...updatedProfile, [name]: value });
+  };
+
+  const handleUpdateProfile = () => {
+    // Implement profile update logic here
+    // You can use selectedRowData and updatedProfile states to update the profile
+    // After updating, close the dialog
+    setIsDialogOpen(false);
+  };
   const columns = [
     { field: "user_id", headerName: "ID", flex: 0.5 },
     {
@@ -129,8 +160,71 @@ const IcAdminProfile = () => {
           rows={data}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
+          onRowClick={handleRowClick} // Attach the onClick event handler to the DataGrid
+          selectionModel={selectedRow ? [selectedRow] : []} // Highlight the selected row
         />
       </Box>
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Update Profile</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            name="name"
+            label="Name"
+            type="text"
+            fullWidth
+            value={selectedRowData ? selectedRowData.name : ""}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="location"
+            label="Location"
+            type="text"
+            fullWidth
+            value={selectedRowData ? selectedRowData.location : ""}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="phone"
+            label="Phone No."
+            type="number"
+            fullWidth
+            value={selectedRowData ? selectedRowData.phone : ""}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="email"
+            label="Email"
+            type="email"
+            fullWidth
+            value={selectedRowData ? selectedRowData.email : ""}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="about"
+            label="About"
+            type="text"
+            fullWidth
+            multiline
+            rows={4}
+            value={selectedRowData ? selectedRowData.about : ""}
+            onChange={handleInputChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleUpdateProfile} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

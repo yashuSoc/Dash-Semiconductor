@@ -1,81 +1,84 @@
 import { Box, useTheme } from "@mui/material";
-import { DataGrid , GridToolbar } from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import { tokens } from "../../theme";
 import Header from "../../components/Header";
+import axios from "axios";
 
-const Customerapproved = () => {
+const CustomerDomainLeader = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/adminApproved");
-      // Generate unique IDs for each row
-      console.log(response.data)
-      const dataWithIds = response.data.map((row) => ({
-        id: row.user_id, // Use `user_id` as the `id` property for each row
+      const response = await axios.get("http://localhost:3000/adminDomainProfile");
+      const dataWithIds = response.data.map((row, index) => ({
+        id: row.domainid + 1, // Assuming index starts from 0, you can adjust this if necessary
         ...row
       }));
-      console.log("Data with IDs:", dataWithIds);
       setData(dataWithIds);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle the error gracefully, e.g., show an error message to the user
     }
   };
-  
 
   useEffect(() => {
     fetchData();
   }, []);
   const columns = [
-    { field: "user_id", headerName: "Customer ID" },
+    { field: "domainid", headerName: "ID" },
     {
-      field: "name",
-      headerName: "Company Name",
-      type: "string",
-      flex: 0.4,
+      field: "headin",
+      headerName: "Head",
+      type: "text",
+      flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "no_of_employees",
-      headerName: "No. of Employee",
+        field: "no_of_tapeouts_handled",
+        headerName: "No. of Tapeouts Handled",
+        type: "number",
+        headerAlign: "left",
+        align: "left",
+        flex: 1,
+        cellClassName: "name-column--cell",
+      },
+    
+    {
+      field: "expin_in_years",
+      headerName: "Years of Exp.",
       type: "number",
       headerAlign: "left",
       align: "left",
-      flex: 0.4,
+      flex: 1,
+      cellClassName: "name-column--cell",
     },
     {
-        field: "projects_delivered",
-        headerName: "Projects Delivered",
-        type: "number",
-        headerAlign: "left",
-        align: "left",
-        flex: 0.5,
-    },
-    {
-        field: "existing_clients",
-        headerName: "Existing Clients",
-        type: "number",
-        headerAlign: "left",
-        align: "left",
-        flex: 0.4,
-    },
-    {
-      field: "location",
-      headerName:"Location",
+      field: "projects_delivered",
+      headerName: "Projects",
+      type: "number",
       headerAlign: "left",
       align: "left",
-      type:"text",
-      flex:1.5,
+      flex: 1,
+      cellClassName: "name-column--cell",
     },
+    {
+      field: "existing_clients",
+      headerName: "Clients Served",
+      type: "number",
+      headerAlign: "left",
+      align: "left",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+
   ];
 
   return (
     <Box m="20px">
-      <Header title="Customer" subtitle="Managing the Customers"/> 
+      <Header title="DOMAIN LEADER PROFILE" subtitle="Managing The Domain Leaders Profile" />
+      {/* <Customerbar/> */}
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -105,10 +108,10 @@ const Customerapproved = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={data} columns={columns} components={{ Toolbar: GridToolbar }}/>
+        <DataGrid rows={data} columns={columns} getRowId={(row) => row.id} autoHeight/>
       </Box>
     </Box>
   );
 };
 
-export default Customerapproved;
+export default CustomerDomainLeader;

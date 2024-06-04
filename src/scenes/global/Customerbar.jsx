@@ -88,13 +88,15 @@ const Customerbar = () => {
           {!isCollapsed && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
-                <img
-                  alt="profile-user"
-                  width="100px"
-                  height="100px"
-                  src={`./avatar.png`}
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
+              <Link to="/customerDashboard/CustomerUser"> {/* Link to the profile page */}
+            <img
+              alt="profile-user"
+              width="100px"
+              height="100px"
+              src={`../../avatar.png`}
+              style={{ cursor: "pointer", borderRadius: "50%" }}
+            />
+          </Link>
               </Box>
               <Box textAlign="center">
                 <Typography
@@ -136,12 +138,34 @@ const Customerbar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Raise Request"
+              title="List Of IC Design Firm"
+              to="/customerDashboard/ic"
+              icon={<ContactsOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="List Of Domain Leaders"
+              to="/customerDashboard/dl"
+              icon={<ContactsOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="List Of Engineers"
+              to="/customerDashboard/eng"
+              icon={<ContactsOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Request Service"
               to="/customerDashboard/customerRequest"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
+            
             <Typography
               variant="h6"
               color={colors.grey[300]}

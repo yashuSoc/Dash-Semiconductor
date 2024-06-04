@@ -131,21 +131,6 @@ const CustomerRequest = () => {
                 sx={{ gridColumn: "span 2" }}
                 required
               />
-
-<TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Additional Information"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.info}
-                name="info"
-                error={!!touched.info && !!errors.info}
-                helperText={touched.info && errors.info}
-                sx={{ gridColumn: "span 2" }}
-                required
-              />
               <input
                 id="file-upload"
                 type="file"
@@ -180,6 +165,20 @@ const CustomerRequest = () => {
                   </Button>
                 </div>
               )}
+              <TextField
+                fullWidth
+                variant="filled"
+                type="text"
+                label="Additional Information"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.info}
+                name="info"
+                error={!!touched.info && !!errors.info}
+                helperText={touched.info && errors.info}
+                sx={{ gridColumn: "span 4" }}
+                required
+              />
             </Box>
 
             

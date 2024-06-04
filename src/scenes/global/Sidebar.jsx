@@ -138,7 +138,7 @@ const Sidebar = () => {
               alt="profile-user"
               width="100px"
               height="100px"
-              src={`./avatar.png`}
+              src={`../../avatar.png`}
               style={{ cursor: "pointer", borderRadius: "50%" }}
             />
           </Link>

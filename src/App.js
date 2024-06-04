@@ -42,6 +42,7 @@ import Icclients from "./scenes/icDesign/icClients";
 import Icprojects from "./scenes/icDesign/icProjects";
 import SigninPage from "./scenes/signin";
 import Customerapproved from "./scenes/team/approved";
+import CustomerUser from "./scenes/customerDashboard/customerProfile";
 import Customerprogress from "./scenes/team/inprogress";
 import Customerrejected from "./scenes/team/rejected";
 import CustomerRequest from "./scenes/customerDashboard/customerRequest";
@@ -59,6 +60,8 @@ import IcAdminProgress from "./scenes/designAdmin/inprogress";
 import IcAdminApproved from "./scenes/designAdmin/approved";
 import IcAdminRejected from "./scenes/designAdmin/rejected";
 import Profile from "./scenes/profile";
+import CustomerIc from "./scenes/customerDashboard/customerIc";
+import CustomerDomainLeader from "./scenes/customerDashboard/cusotmerDl";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -105,6 +108,10 @@ function App() {
               <Route path="/customerDashboard/customerform" element={<Customerform/>}/>
               <Route path="/customerDashboard/custboard" element={<Customerboard/>}/>
               <Route path="/customerDashboard/customerCalender" element={<Customercalendar/>}/>
+              <Route path="/customerDashboard/CustomerUser" element={<CustomerUser/>}/>
+              <Route path="/customerDashboard/ic" element={<CustomerIc/>}/>
+              <Route path="/customerDashboard/dl" element={<CustomerDomainLeader/>}/>
+
 
               {/*.........Engineer Dashboard Routes...... */}
               <Route path="/engineerDashboard" element={<Engineerboard/>}/>

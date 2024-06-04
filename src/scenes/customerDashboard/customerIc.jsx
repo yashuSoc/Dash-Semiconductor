@@ -1,22 +1,26 @@
 import { Box, useTheme } from "@mui/material";
-import { DataGrid , GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
+import Header from "../../components/Header";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import Header from "../../components/Header";
 
-const Customerapproved = () => {
+const CustomerIc = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
+  
+
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/adminApproved");
+      const response = await axios.get(
+        "http://localhost:3000/adminDesignProfile"
+      );
       // Generate unique IDs for each row
-      console.log(response.data)
+      console.log(response.data);
       const dataWithIds = response.data.map((row) => ({
         id: row.user_id, // Use `user_id` as the `id` property for each row
-        ...row
+        ...row,
       }));
       console.log("Data with IDs:", dataWithIds);
       setData(dataWithIds);
@@ -25,57 +29,80 @@ const Customerapproved = () => {
       // Handle the error gracefully, e.g., show an error message to the user
     }
   };
-  
-
   useEffect(() => {
     fetchData();
   }, []);
+ 
   const columns = [
-    { field: "user_id", headerName: "Customer ID" },
-    {
-      field: "name",
-      headerName: "Company Name",
-      type: "string",
-      flex: 0.4,
-      cellClassName: "name-column--cell",
-    },
+    { field: "user_id", headerName: "ID", flex: 0.3, cellClassName: "name-column--cell", },
+    
     {
       field: "no_of_employees",
       headerName: "No. of Employee",
       type: "number",
       headerAlign: "left",
       align: "left",
-      flex: 0.4,
+      flex: 0.5,
+      cellClassName: "name-column--cell",
     },
     {
-        field: "projects_delivered",
-        headerName: "Projects Delivered",
-        type: "number",
-        headerAlign: "left",
-        align: "left",
-        flex: 0.5,
+      field: "existing_clients",
+      headerName: "Clients",
+      type: "number",
+      headerAlign: "left",
+      align: "left",
+      flex: 0.5,
+      cellClassName: "name-column--cell",
     },
     {
-        field: "existing_clients",
-        headerName: "Existing Clients",
-        type: "number",
-        headerAlign: "left",
-        align: "left",
-        flex: 0.4,
+      field: "projects_delivered",
+      headerName: "Projects",
+      type: "number",  
+      headerAlign: "left",
+      align: "left",
+      flex: 0.5,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "no_of_employees_dv",
+      headerName: "No. of DV ",
+      type: "number",
+      headerAlign: "left",
+      align: "left",
+      flex: 0.5,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "no_of_employees_dft",
+      headerName: "No. of DFT ",
+      type: "number",
+      headerAlign: "left",
+      align: "left",
+      flex: 0.5,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "no_of_employees_pd",
+      headerName: "No. of PD",
+      type: "number",
+      headerAlign: "left",
+      align: "left",
+      flex: 0.5,
+      cellClassName: "name-column--cell",
     },
     {
       field: "location",
-      headerName:"Location",
+      headerName: "Location",
       headerAlign: "left",
-      align: "left",
-      type:"text",
-      flex:1.5,
+      type: "text",
+      flex: 1.5,
+      cellClassName: "name-column--cell",
     },
   ];
 
   return (
     <Box m="20px">
-      <Header title="Customer" subtitle="Managing the Customers"/> 
+      <Header title="IC DESIGN PROVIDER FIRM" subtitle="Here Are The Approved Available Profiles" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -105,10 +132,14 @@ const Customerapproved = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={data} columns={columns} components={{ Toolbar: GridToolbar }}/>
+        <DataGrid
+          rows={data}
+          columns={columns}
+          components={{ Toolbar: GridToolbar }}
+        />
       </Box>
     </Box>
   );
 };
 
-export default Customerapproved;
+export default CustomerIc;
