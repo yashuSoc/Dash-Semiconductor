@@ -6,7 +6,7 @@ import {
   DialogContent,
   Typography,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
@@ -121,6 +121,9 @@ const Customerprofile = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
         }}
       >
         <DataGrid
@@ -129,6 +132,7 @@ const Customerprofile = () => {
           getRowId={(row) => row.id} 
           autoHeight
           onRowClick={handleRowClick}
+          components={{ Toolbar: GridToolbar }}
         />
         <CustomAlert
         open={notificationOpen}
@@ -179,7 +183,7 @@ const Customerprofile = () => {
                 component="div"
                 style={{ marginTop: "12px" }}
               >
-                <strong>CLient Detail</strong> {detailedData.phnno}
+                <strong>Client Detail</strong> {detailedData.phnno}
               </Typography>
               <Typography
                 variant="h5"

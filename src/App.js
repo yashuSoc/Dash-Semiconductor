@@ -62,6 +62,7 @@ import IcAdminRejected from "./scenes/designAdmin/rejected";
 import Profile from "./scenes/profile";
 import CustomerIc from "./scenes/customerDashboard/customerIc";
 import CustomerDomainLeader from "./scenes/customerDashboard/cusotmerDl";
+import IcDesignProfile from "./scenes/icDesign/icProfile";
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -123,6 +124,7 @@ function App() {
               {/* ........IC Design Dashboard Routes..... */}
               <Route path="/icDesign/icboard" element={<Icboard/>}/>
               <Route path="/icDesign/icdesign" element={<Icprofile/>}/>
+              <Route path="/icDesign/icProfile" element={<IcDesignProfile/>}/>
               <Route path="/icDesign/icClients" element={<Icclients/>}/>
               <Route path="/icDesign/icProjects" element={<Icprojects/>}/>
               <Route path="/icDesign/icForm" element={<Icform/>}/>

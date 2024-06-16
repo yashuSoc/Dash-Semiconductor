@@ -164,13 +164,13 @@ const SignupPage = ({ onSignInClick, onHide }) => {
                   navigate('/customerDashboard/customerform');
                   break;
               case 'IC design service provider':
-                  navigate('/icDesign/icboard');
+                  navigate('/icDesign/icForm');
                   break;
               case 'Domain Leader':
-                  navigate('/domainLeader/domainDashboard');
+                  navigate('/domainLeader/domainform');
                   break;
               case 'Engineer':
-                  navigate('/engineerDashboard');
+                  navigate('/engineerDashboard/Form');
                   break;
               default:
                   setAlert({ open: true, severity: 'error', message: 'Invalid role: ' + dropdownValue });

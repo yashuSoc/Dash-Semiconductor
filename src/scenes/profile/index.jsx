@@ -126,7 +126,7 @@ const Profile = () => {
             <Box display="flex" alignItems="center">
               <img
                 alt="profile-avatar"
-                src="./avatar.png"
+                src="./AdminAvatar.png"
                 width="120px"
                 height="120px"
                 style={{ borderRadius: "50%", marginRight: "20px" }}

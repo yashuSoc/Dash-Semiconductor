@@ -577,10 +577,18 @@ app.get('/getCustomerRequirements', async (req, res) => {
     // const userId = req.params.userId;
 
     const query = `
-      SELECT ur.user_id, u.name AS user_name, ur.no_of_ic, ur.no_of_dl, ur.no_of_eng 
+    SELECT 
+        ur.user_id, 
+        u.name AS user_name, 
+        ur.no_of_ic, 
+        ur.no_of_dl, 
+        ur.no_of_eng,
+        uf.file,
+        uf.file_id
       FROM "user_request" ur
       JOIN "user" u ON ur.user_id = u.user_id 
-      WHERE requeststatus_id = 0 
+      LEFT JOIN "user_files" uf ON ur.file_id = uf.file_id
+      WHERE ur.requeststatus_id = 0 
     `;
 
     const result = await db.query(query);
@@ -598,6 +606,36 @@ app.get('/getCustomerRequirements', async (req, res) => {
   }
 });
 
+
+
+
+// 
+app.get('/download', async (req, res) => {
+  try {
+    const fileId = req.query.fileId;  // Get fileId from query parameters
+
+    if (!fileId) {
+      return res.status(400).json({ error: 'fileId is required' });
+    }
+
+    const query = `SELECT file FROM "user_files" WHERE file_id = $1`;
+    const result = await db.query(query, [fileId]);
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'File not found' });
+    } else {
+      const file = result.rows[0].file;
+      const fileBuffer = Buffer.from(file, 'binary');
+      
+      res.setHeader('Content-Disposition', `attachment; filename="downloaded_file"`);
+      res.setHeader('Content-Type', 'application/octet-stream');
+      res.send(fileBuffer);
+    }
+  } catch (error) {
+    console.error('Error fetching file:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // ....Admin Customer.....//
 app.get('/admincustomerInprogress', async (req, res) => {
@@ -879,6 +917,67 @@ app.get('/adminDesignRejected', async (req, res) => {
   res.json(result.rows);
   } catch (error) {
     console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.get('/IcUser', async (req, res) => {
+  try {
+    const { userId } = req.query; // Destructure userId from req.params
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    const query = `
+    SELECT u.user_id, 
+    u.role_id, 
+    u.createdatetime, 
+    u.email, 
+    u.location, 
+    u.name, 
+    u.no_of_employees, 
+    u.existing_clients, 
+    ic.no_of_employees_dv,
+    ic.no_of_employees_dft,
+    ic.no_of_employees_pd
+FROM "user" u
+JOIN "icdesign_fields" ic ON u.user_id = ic.user_id
+WHERE u.user_id = $1;
+    `;
+    
+    // Execute the query
+    const result = await db.query(query, [userId]); // Pass userId to the query
+    
+    // Check if user is found
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Send the result as JSON
+    res.json(result.rows[0]); // Return the first row (assuming user_id is unique)
+  } catch (error) {
+    console.error('Error executing query', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.put('/updateIcDesignUser', async(req, res) =>{
+  const { user_id, name, location, email, no_of_employees_dft, no_of_employees_dv, no_of_employees_pd } = req.body;
+  try {
+    await db.query('BEGIN');
+    const result = await db.query(
+      'UPDATE "user" SET name = $1, location = $2, email = $3 WHERE user_id = $4 RETURNING *',
+      [name, location, email, user_id]
+    );
+    const icDesignFieldsUpdateResult = await db.query(
+      'UPDATE "icdesign_fields" SET no_of_employees_dv = $1, no_of_employees_pd = $2, no_of_employees_dft =$3 WHERE user_id = $4',
+      [no_of_employees_dv, no_of_employees_pd , no_of_employees_dft,  user_id]
+    );
+    await db.query('COMMIT');
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

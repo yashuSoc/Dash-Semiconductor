@@ -1,21 +1,76 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme, IconButton } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import EmailIcon from "@mui/icons-material/Email";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
 import GeographyChart from "../../components/GeographyChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import DesignServicesIcon from '@mui/icons-material/DesignServices';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import EngineeringIcon from '@mui/icons-material/Engineering';
+import DomainIcon from '@mui/icons-material/Domain';
 
 const Customerboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [statistics, setStatistics] = useState({
+    designers: 0,
+    customers: 0,
+    engineers: 0,
+    domainLeaders: 0
+  });
+
+  useEffect(() => {
+    fetchData(); // Fetch data when the component mounts
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/statistics`);
+      setStatistics(response.data); // Update state with the response data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const totalDesigners = statistics.designers; 
+  const totalcustomers = statistics.customers;
+  const totalEngineers = statistics.engineers;
+  const totalDomain = statistics.domainLeaders;
+  const maxCusotmers = 100;
+  const maxDesigners = 100; 
+  const maxEngineers = 100;
+  const maxDomain = 100;
+  const progress_c = totalcustomers / maxCusotmers;
+  const progress_i = totalDesigners / maxDesigners; 
+  const progress_e = totalEngineers / maxEngineers;
+  const progress_d = totalDomain / maxDomain;
+
+  const handleDownloadReport = () => {
+    const reportData = `
+      Statistics Report
+      -----------------
+      Total IC Designers: ${totalDesigners}
+      Total Customers: ${totalcustomers}
+      Total Engineers: ${totalEngineers}
+      Total Domain Leaders: ${totalDomain}
+    `;
+
+    const blob = new Blob([reportData], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'report.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
 
   return (
     <Box m="20px">
@@ -25,12 +80,14 @@ const Customerboard = () => {
 
         <Box>
           <Button
+            onClick={handleDownloadReport}
             sx={{
               backgroundColor: colors.blueAccent[700],
               color: colors.grey[100],
               fontSize: "14px",
               fontWeight: "bold",
               padding: "10px 20px",
+              borderRadius: "10px", // Rounded edges
             }}
           >
             <DownloadOutlinedIcon sx={{ mr: "10px" }} />
@@ -53,14 +110,15 @@ const Customerboard = () => {
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="10px" // Rounded edges
         >
           <StatBox
-            title="12,361"
-            subtitle="Emails Sent"
-            progress="0.75"
+            title={statistics.designers}
+            subtitle="Total IC Designers"
+            progress={progress_i}
             increase="+14%"
             icon={
-              <EmailIcon
+              <DesignServicesIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -72,14 +130,15 @@ const Customerboard = () => {
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="10px" // Rounded edges
         >
           <StatBox
-            title="431,225"
-            subtitle="Sales Obtained"
-            progress="0.50"
+            title={statistics.customers}
+            subtitle="Total Customers"
+            progress={progress_c}
             increase="+21%"
             icon={
-              <PointOfSaleIcon
+              <PeopleAltIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -91,14 +150,15 @@ const Customerboard = () => {
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="8px" // Rounded edges
         >
           <StatBox
-            title="32,441"
-            subtitle="New Clients"
-            progress="0.30"
+            title={statistics.engineers}
+            subtitle="Total Engineers"
+            progress={progress_e}
             increase="+5%"
             icon={
-              <PersonAddIcon
+              <EngineeringIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -110,14 +170,15 @@ const Customerboard = () => {
           display="flex"
           alignItems="center"
           justifyContent="center"
+          borderRadius="8px" // Rounded edges
         >
           <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress="0.80"
+            title={statistics.domainLeaders}
+            subtitle="Total Domain Leaders"
+            progress={progress_d}
             increase="+43%"
             icon={
-              <TrafficIcon
+              <DomainIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -129,6 +190,7 @@ const Customerboard = () => {
           gridColumn="span 8"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
+          borderRadius="8px" // Rounded edges
         >
           <Box
             mt="25px"
@@ -142,6 +204,7 @@ const Customerboard = () => {
                 variant="h5"
                 fontWeight="600"
                 color={colors.grey[100]}
+                
               >
                 Revenue Generated
               </Typography>
@@ -170,6 +233,7 @@ const Customerboard = () => {
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
           overflow="auto"
+          borderRadius="8px" // Rounded edges
         >
           <Box
             display="flex"
@@ -180,7 +244,7 @@ const Customerboard = () => {
             p="15px"
           >
             <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Transactions
+              Recent Approved Profiles
             </Typography>
           </Box>
           {mockTransactions.map((transaction, i) => (
@@ -221,7 +285,8 @@ const Customerboard = () => {
           gridColumn="span 4"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
-          p="30px"
+          p ="30px"
+          borderRadius="8px" // Rounded edges
         >
           <Typography variant="h5" fontWeight="600">
             Campaign
@@ -247,6 +312,7 @@ const Customerboard = () => {
           gridColumn="span 4"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
+          borderRadius="8px" // Rounded edges
         >
           <Typography
             variant="h5"
@@ -264,6 +330,7 @@ const Customerboard = () => {
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
           padding="30px"
+          borderRadius="8px" // Rounded edges
         >
           <Typography
             variant="h5"
@@ -282,3 +349,4 @@ const Customerboard = () => {
 };
 
 export default Customerboard;
+

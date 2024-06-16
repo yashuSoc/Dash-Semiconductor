@@ -88,13 +88,15 @@ const Icdesignbar = () => {
           {!isCollapsed && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
-                <img
-                  alt="profile-user"
-                  width="100px"
-                  height="100px"
-                  src={`../../avatar.png`}
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
+              <Link to="/icDesign/icProfile"> {/* Link to the profile page */}
+            <img
+              alt="profile-user"
+              width="100px"
+              height="100px"
+              src={`../../avatar.png`}
+              style={{ cursor: "pointer", borderRadius: "50%" }}
+            />
+          </Link>
               </Box>
               <Box textAlign="center">
                 <Typography

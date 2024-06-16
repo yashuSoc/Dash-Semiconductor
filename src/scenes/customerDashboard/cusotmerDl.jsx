@@ -1,6 +1,6 @@
 import { Box, useTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import axios from "axios";
@@ -106,9 +106,12 @@ const CustomerDomainLeader = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
         }}
       >
-        <DataGrid rows={data} columns={columns} getRowId={(row) => row.id} autoHeight/>
+        <DataGrid rows={data} columns={columns} getRowId={(row) => row.id} autoHeight components={{ Toolbar: GridToolbar }}/>
       </Box>
     </Box>
   );
